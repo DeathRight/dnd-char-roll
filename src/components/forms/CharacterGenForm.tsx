@@ -3,12 +3,13 @@ import { useMemo, useState } from 'react';
 import Roll from 'roll';
 
 import { styled } from '../../stitches.config';
-import { Sex } from '../../util';
+import { properNounAll, Sex } from '../../util';
+import backgrounds from '../../util/backgrounds';
 import Center from '../common/Center';
 import Divider from '../common/Divider';
 import Flex from '../common/Flex';
 import RadioGroup, { RadioItem } from '../common/RadioGroup';
-import SelectDemo from '../common/SelectList';
+import SelectDemo, { SelectList } from '../common/SelectList';
 import { useTheme } from '../contexts/ThemeContextProvider';
 import IconButton from '../IconButton';
 import CopyableTextArea from '../inputs/CopyableTextArea';
@@ -58,6 +59,10 @@ const CharacterGenForm = () => {
     const [maxAge, setMaxAge] = useState(60);
     const [age, setAge] = useState(randomInt(minAge, maxAge));
 
+    const [background, setBackground] = useState(
+        backgrounds[randomInt(0, backgrounds.length - 1)]
+    );
+
     const [statRoll, setStatRoll] = useState("4d6b3");
     const rollStats = () => {
         const a = [];
@@ -81,6 +86,7 @@ const CharacterGenForm = () => {
                     age: age,
                     firstName: firstName,
                     lastName: lastName,
+                    background: background,
                     ...(() => {
                         let o: { [k: string]: number } = {};
                         stats.forEach((v, i) => (o[StatNames[i]] = v.result));
@@ -90,7 +96,7 @@ const CharacterGenForm = () => {
                 null,
                 " "
             ),
-        [sex, age, firstName, lastName, stats]
+        [sex, age, firstName, lastName, stats, background]
     );
 
     const StatsTable = useMemo(
@@ -153,7 +159,12 @@ const CharacterGenForm = () => {
             />
             <Divider label="Background" />
             <Flex>
-                <SelectDemo />
+                <SelectList
+                    aria-label="Background"
+                    list={backgrounds}
+                    value={background.toLowerCase()}
+                    onValueChange={(v) => setBackground(properNounAll(v))}
+                />
             </Flex>
             <Divider label="Stats" />
             <Flex style={{ width: "100%" }}>{StatsTable}</Flex>
@@ -167,6 +178,9 @@ const CharacterGenForm = () => {
                     setSex(Math.round(Math.random()));
                     setAge(randomInt(minAge, maxAge));
                     setStats(rollStats());
+                    setBackground(
+                        backgrounds[randomInt(0, backgrounds.length - 1)]
+                    );
                 }}
             />
             <Flex style={{ width: "100%" }}>

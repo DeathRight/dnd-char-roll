@@ -1,6 +1,6 @@
 import { CheckIcon, ChevronDownIcon, ChevronUpIcon } from '@radix-ui/react-icons';
 import * as SelectPrimitive from '@radix-ui/react-select';
-import React from 'react';
+import React, { Fragment, useMemo } from 'react';
 
 import { styled } from '../../stitches.config';
 
@@ -241,4 +241,103 @@ export const SelectDemo = () => (
     </Box>
 );
 
-export default SelectDemo;
+type CategoryList = [string, string[]];
+function isListCategoryList(
+    list: string[] | CategoryList[]
+): list is CategoryList[] {
+    return Array.isArray(list[0]);
+}
+export interface SelectListProps
+    extends SelectPrimitive.SelectProps,
+        Pick<SelectPrimitive.SelectTriggerProps, "aria-label"> {
+    /**
+     * Either string[] with item names, or CategoryList [string, string[]][]
+     * where '0' is the category name, and '1' is list of items in that category
+     */
+    list?: string[] | CategoryList[];
+}
+
+export const SelectList = (
+    props: { list?: string[] } & SelectPrimitive.SelectProps &
+        Pick<SelectPrimitive.SelectTriggerProps, "aria-label">
+) => {
+    const { children, "aria-label": ariaLabel, list = [""], ...spread } = props;
+
+    const List = useMemo(() => {
+        if (isListCategoryList(list)) {
+            const l = list as CategoryList[];
+            return (
+                <>
+                    {l.map((c, i) => {
+                        const cName = c[0];
+                        const cList = c[1];
+
+                        const isLast = i === l.length - 1;
+
+                        const CategoryItems = cList.map((item) => (
+                            <Fragment>
+                                <SelectItem value={item.toLowerCase()}>
+                                    <SelectItemText>{item}</SelectItemText>
+                                    <SelectItemIndicator>
+                                        <CheckIcon />
+                                    </SelectItemIndicator>
+                                </SelectItem>
+                            </Fragment>
+                        ));
+
+                        return (
+                            <Fragment>
+                                <SelectGroup>
+                                    <SelectLabel>{cName}</SelectLabel>
+                                    {CategoryItems}
+                                </SelectGroup>
+                                {!isLast ? <SelectSeparator /> : undefined}
+                            </Fragment>
+                        );
+                    })}
+                    ;
+                </>
+            );
+        } else {
+            const l = list as string[];
+            return (
+                <>
+                    {l.map((item) => (
+                        <Fragment>
+                            <SelectItem value={item.toLowerCase()}>
+                                <SelectItemText>{item}</SelectItemText>
+                                <SelectItemIndicator>
+                                    <CheckIcon />
+                                </SelectItemIndicator>
+                            </SelectItem>
+                        </Fragment>
+                    ))}
+                </>
+            );
+        }
+    }, [list]);
+
+    return (
+        <Box>
+            <Select {...spread}>
+                <SelectTrigger aria-label={ariaLabel}>
+                    <SelectValue />
+                    <SelectIcon>
+                        <ChevronDownIcon />
+                    </SelectIcon>
+                </SelectTrigger>
+                <SelectContent>
+                    <SelectScrollUpButton>
+                        <ChevronUpIcon />
+                    </SelectScrollUpButton>
+                    <SelectViewport>{List}</SelectViewport>
+                    <SelectScrollDownButton>
+                        <ChevronDownIcon />
+                    </SelectScrollDownButton>
+                </SelectContent>
+            </Select>
+        </Box>
+    );
+};
+
+export default SelectList;
