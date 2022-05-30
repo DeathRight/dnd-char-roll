@@ -7,16 +7,30 @@ import Center from '../common/Center';
 import Divider from '../common/Divider';
 import Flex from '../common/Flex';
 import RadioGroup, { RadioItem } from '../common/RadioGroup';
+import { useTheme } from '../contexts/ThemeContextProvider';
 import IconButton from '../IconButton';
 import CopyableTextArea from '../inputs/CopyableTextArea';
 import NameGenInput from '../inputs/NameGenInput';
+import NumberInput from '../inputs/NumberInput';
 
 const StyledIconButton = styled(IconButton, {
     width: "100%",
 });
 
+// https://github.com/you-dont-need/You-Dont-Need-Lodash-Underscore#_random
+const randomInt = (a = 1, b = 0) => {
+    const lower = Math.ceil(Math.min(a, b));
+    const upper = Math.floor(Math.max(a, b));
+    return Math.floor(lower + Math.random() * (upper - lower + 1));
+};
+
 const CharacterGenForm = () => {
+    const theme = useTheme();
+
     const [sex, setSex] = useState(Math.round(Math.random()) as Sex);
+    const [minAge, setMinAge] = useState(0);
+    const [maxAge, setMaxAge] = useState(60);
+    const [age, setAge] = useState(randomInt(minAge, maxAge));
 
     const [regen, setRegen] = useState(0);
     const [firstName, setFirstName] = useState("");
@@ -27,18 +41,19 @@ const CharacterGenForm = () => {
             JSON.stringify(
                 {
                     sex: sex,
+                    age: age,
                     firstName: firstName,
                     lastName: lastName,
                 },
                 null,
                 " "
             ),
-        [sex, firstName, lastName]
+        [sex, age, firstName, lastName]
     );
 
     return (
         <Center as={"form"} onSubmit={(e: any) => e.preventDefault()}>
-            <Divider label="Sex" />
+            <Divider label="Biology" />
             <Flex>
                 <RadioGroup
                     orientation="horizontal"
@@ -55,6 +70,15 @@ const CharacterGenForm = () => {
                     />
                 </RadioGroup>
             </Flex>
+            <Flex>
+                <NumberInput
+                    text="Age"
+                    min={minAge}
+                    max={maxAge}
+                    value={age}
+                    onChange={(v) => setAge(v)}
+                />
+            </Flex>
             <Divider label="Name Generator" />
             <NameGenInput
                 sex={sex}
@@ -70,6 +94,7 @@ const CharacterGenForm = () => {
                 onClick={(e) => {
                     setRegen(Math.random() + regen);
                     setSex(Math.round(Math.random()));
+                    setAge(randomInt(minAge, maxAge));
                 }}
             />
             <Flex style={{ width: "100%" }}>
@@ -80,6 +105,7 @@ const CharacterGenForm = () => {
                         maxHeight: "300px",
                         minWidth: "95%",
                         margin: "auto",
+                        color: theme.colors.loC.value,
                     }}
                 />
             </Flex>

@@ -96,11 +96,20 @@ export interface CopyableTextAreaProps
     tag?: string;
 }
 
+export interface NumberInputProps
+    extends Omit<React.HTMLProps<HTMLInputElement>, "onChange"> {
+    htmlFor?: string;
+    text?: string;
+    min?: number;
+    max?: number;
+    onChange?: (value: number) => void;
+}
+
 export interface NameInputProps {
     gen: () => string;
     regen?: number;
     onChange?: (value: string) => void;
-    htmlFor: string;
+    htmlFor?: string;
     text: string;
 }
 

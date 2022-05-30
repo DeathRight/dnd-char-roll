@@ -1,6 +1,6 @@
 import { UpdateIcon } from '@radix-ui/react-icons';
 import * as LabelPrim from '@radix-ui/react-label';
-import React from 'react';
+import React, { useId } from 'react';
 import { useEffect, useState } from 'react';
 
 import { styled } from '../../stitches.config';
@@ -21,6 +21,8 @@ const Label = styled(LabelPrim.Root, {
 const NameInput = (props: NameInputProps) => {
     const { gen, regen, htmlFor, text, onChange } = props;
     const [name, setName] = useState("");
+    const uid = useId();
+    const hF = htmlFor ?? uid;
 
     useEffect(() => {
         const n = properNoun(gen());
@@ -39,9 +41,9 @@ const NameInput = (props: NameInputProps) => {
     return (
         <Flex>
             <div>
-                <Label htmlFor={htmlFor}>{text}</Label>
+                <Label htmlFor={hF}>{text}</Label>
                 <CopyableInput
-                    id={htmlFor}
+                    id={hF}
                     value={name}
                     onChange={(e) => onInputChange(e.currentTarget.value)}
                     tag={text}
