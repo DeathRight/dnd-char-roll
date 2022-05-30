@@ -42,6 +42,7 @@ const StyledIconButton = styled(Button, {
     paddingLeft: "6px",
     paddingRight: "6px",
     marginTop: "auto",
+    marginRight: "$4",
     boxShadow: "none",
     backgroundColor: "transparent",
     "&:hover": {

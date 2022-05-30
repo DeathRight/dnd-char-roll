@@ -2,6 +2,7 @@ import { Cross2Icon } from '@radix-ui/react-icons';
 import * as PopoverPrimitive from '@radix-ui/react-popover';
 
 import { keyframes, styled } from '../../stitches.config';
+import Divider from './Divider';
 
 const slideUpAndFade = keyframes({
     "0%": { opacity: 0, transform: "translateY(2px)" },
@@ -71,7 +72,16 @@ const Flex = styled("div", {
     display: "flex",
     flexDirection: "column",
     gap: "$2",
-    paddingTop: "$5",
+    paddingTop: "$2",
+});
+
+const Header = styled("div", {
+    display: "flex",
+    flexDirection: "column",
+    position: "sticky",
+    top: "0",
+    paddingTop: "$3",
+    width: "100%",
 });
 
 // Exports
@@ -79,7 +89,12 @@ const Content = (props: PopoverPrimitive.PopoverContentProps) => {
     const { children, sideOffset = 5, ...spread } = props;
     return (
         <StyledContent sideOffset={sideOffset} {...spread}>
-            <Flex>{children}</Flex>
+            <Flex>
+                <Header>
+                    <Divider />
+                </Header>
+                {children}
+            </Flex>
             <StyledArrow />
             <StyledClose aria-label="Close">
                 <Cross2Icon />

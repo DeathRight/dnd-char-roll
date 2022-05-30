@@ -1,60 +1,64 @@
 {
-  "name": "dnd-char-roll",
-  "version": "0.1.0",
-  "private": true,
-  "dependencies": {
-    "@radix-ui/colors": "^0.1.8",
-    "@radix-ui/react-icons": "^1.1.1",
-    "@radix-ui/react-label": "^0.1.6-rc.17",
-    "@radix-ui/react-popover": "^0.1.7-rc.27",
-    "@radix-ui/react-portal": "^0.1.5-rc.21",
-    "@radix-ui/react-radio-group": "^0.1.6-rc.20",
-    "@radix-ui/react-select": "^0.1.2-rc.26",
-    "@radix-ui/react-separator": "^0.1.5-rc.17",
-    "@radix-ui/react-slider": "^0.1.5-rc.30",
-    "@radix-ui/react-slot": "^0.1.3-rc.17",
-    "@radix-ui/react-toggle": "^0.1.5-rc.17",
-    "@radix-ui/react-tooltip": "^0.1.8-rc.22",
-    "@react-spring/web": "^9.4.5",
-    "@stitches/react": "^1.2.8",
-    "@testing-library/jest-dom": "^5.16.4",
-    "@testing-library/react": "^13.2.0",
-    "@testing-library/user-event": "^13.5.0",
-    "@types/jest": "^27.5.1",
-    "@types/node": "^16.11.35",
-    "@types/react": "^18.0.9",
-    "@types/react-dom": "^18.0.4",
-    "@types/roll": "^1.2.0",
-    "react": "^18.1.0",
-    "react-dom": "^18.1.0",
-    "react-overlays": "^5.1.2",
-    "react-scripts": "5.0.1",
-    "roll": "^1.3.1",
-    "typescript": "^4.6.4",
-    "web-vitals": "^2.1.4"
-  },
-  "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
-  },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
-  },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
-  }
+    "name": "dnd-char-roll",
+    "version": "0.1.0",
+    "private": true,
+    "dependencies": {
+        "@radix-ui/colors": "^0.1.8",
+        "@radix-ui/react-icons": "^1.1.1",
+        "@radix-ui/react-label": "^0.1.6-rc.17",
+        "@radix-ui/react-popover": "^0.1.7-rc.27",
+        "@radix-ui/react-portal": "^0.1.5-rc.21",
+        "@radix-ui/react-radio-group": "^0.1.6-rc.20",
+        "@radix-ui/react-select": "^0.1.2-rc.26",
+        "@radix-ui/react-separator": "^0.1.5-rc.17",
+        "@radix-ui/react-slider": "^0.1.5-rc.30",
+        "@radix-ui/react-slot": "^0.1.3-rc.17",
+        "@radix-ui/react-toggle": "^0.1.5-rc.17",
+        "@radix-ui/react-tooltip": "^0.1.8-rc.22",
+        "@react-spring/web": "^9.4.5",
+        "@stitches/react": "^1.2.8",
+        "@testing-library/jest-dom": "^5.16.4",
+        "@testing-library/react": "^13.2.0",
+        "@testing-library/user-event": "^13.5.0",
+        "@types/jest": "^27.5.1",
+        "@types/node": "^16.11.35",
+        "@types/react": "^18.0.9",
+        "@types/react-dom": "^18.0.4",
+        "react": "^18.1.0",
+        "react-dom": "^18.1.0",
+        "react-overlays": "^5.1.2",
+        "react-scripts": "5.0.1",
+        "roll": "^1.3.1",
+        "typescript": "^4.6.4",
+        "util": "^0.12.4",
+        "web-vitals": "^2.1.4"
+    },
+    "scripts": {
+        "start": "react-app-rewired start",
+        "build": "react-app-rewired build",
+        "test": "react-app-rewired test",
+        "eject": "react-app-rewired eject"
+    },
+    "eslintConfig": {
+        "extends": [
+            "react-app",
+            "react-app/jest"
+        ]
+    },
+    "browserslist": {
+        "production": [
+            ">0.2%",
+            "not dead",
+            "not op_mini all"
+        ],
+        "development": [
+            "last 1 chrome version",
+            "last 1 firefox version",
+            "last 1 safari version"
+        ]
+    },
+    "devDependencies": {
+        "@types/roll": "^1.2.0",
+        "react-app-rewired": "^2.2.1"
+    }
 }

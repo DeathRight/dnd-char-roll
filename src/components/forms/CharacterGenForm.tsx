@@ -1,5 +1,6 @@
 import { UpdateIcon } from '@radix-ui/react-icons';
 import { useMemo, useState } from 'react';
+import Roll from 'roll';
 
 import { styled } from '../../stitches.config';
 import { Sex } from '../../util';
@@ -7,14 +8,30 @@ import Center from '../common/Center';
 import Divider from '../common/Divider';
 import Flex from '../common/Flex';
 import RadioGroup, { RadioItem } from '../common/RadioGroup';
+import SelectDemo from '../common/SelectList';
 import { useTheme } from '../contexts/ThemeContextProvider';
 import IconButton from '../IconButton';
 import CopyableTextArea from '../inputs/CopyableTextArea';
 import NameGenInput from '../inputs/NameGenInput';
 import NumberInput from '../inputs/NumberInput';
 
+const roll = new Roll();
+
 const StyledIconButton = styled(IconButton, {
     width: "100%",
+});
+
+const StyledTable = styled("table", {
+    width: "100%",
+    borderCollapse: "collapse",
+    borderSpacing: "0",
+    textAlign: "center",
+    fontSize: "$md",
+});
+const StyledTBody = styled("tbody", {
+    "& tr:nth-child(even)": {
+        backgroundColor: "$appBg",
+    },
 });
 
 // https://github.com/you-dont-need/You-Dont-Need-Lodash-Underscore#_random
@@ -24,13 +41,33 @@ const randomInt = (a = 1, b = 0) => {
     return Math.floor(lower + Math.random() * (upper - lower + 1));
 };
 
+const StatNames = [
+    "Strength",
+    "Dexterity",
+    "Constitution",
+    "Wisdom",
+    "Intelligence",
+    "Charisma",
+];
+
 const CharacterGenForm = () => {
     const theme = useTheme();
 
     const [sex, setSex] = useState(Math.round(Math.random()) as Sex);
-    const [minAge, setMinAge] = useState(0);
+    const [minAge, setMinAge] = useState(1);
     const [maxAge, setMaxAge] = useState(60);
     const [age, setAge] = useState(randomInt(minAge, maxAge));
+
+    const [statRoll, setStatRoll] = useState("4d6b3");
+    const rollStats = () => {
+        const a = [];
+        for (let i = 0; i < StatNames.length; i++) {
+            a.push(roll.roll(statRoll));
+        }
+
+        return a;
+    };
+    const [stats, setStats] = useState(() => rollStats());
 
     const [regen, setRegen] = useState(0);
     const [firstName, setFirstName] = useState("");
@@ -44,11 +81,39 @@ const CharacterGenForm = () => {
                     age: age,
                     firstName: firstName,
                     lastName: lastName,
+                    ...(() => {
+                        let o: { [k: string]: number } = {};
+                        stats.forEach((v, i) => (o[StatNames[i]] = v.result));
+                        return o;
+                    })(),
                 },
                 null,
                 " "
             ),
-        [sex, age, firstName, lastName]
+        [sex, age, firstName, lastName, stats]
+    );
+
+    const StatsTable = useMemo(
+        () => (
+            <StyledTable>
+                <StyledTBody>
+                    {stats.map((v, i) => {
+                        const rolled = v.calculations[1] as unknown as number[];
+                        // Typing is wrong, console.log reveals calculations = [number, number[]]
+                        return (
+                            <tr>
+                                <td>{StatNames[i]}</td>
+                                <td>{`${rolled.join("+")}`}</td>
+                                <td
+                                    style={{ fontWeight: "bold" }}
+                                >{`${v.result}`}</td>
+                            </tr>
+                        );
+                    })}
+                </StyledTBody>
+            </StyledTable>
+        ),
+        [stats]
     );
 
     return (
@@ -86,6 +151,12 @@ const CharacterGenForm = () => {
                 onLastChange={(n) => setLastName(n)}
                 regen={regen}
             />
+            <Divider label="Background" />
+            <Flex>
+                <SelectDemo />
+            </Flex>
+            <Divider label="Stats" />
+            <Flex style={{ width: "100%" }}>{StatsTable}</Flex>
             <Divider />
             <StyledIconButton
                 icon={UpdateIcon}
@@ -95,6 +166,7 @@ const CharacterGenForm = () => {
                     setRegen(Math.random() + regen);
                     setSex(Math.round(Math.random()));
                     setAge(randomInt(minAge, maxAge));
+                    setStats(rollStats());
                 }}
             />
             <Flex style={{ width: "100%" }}>
