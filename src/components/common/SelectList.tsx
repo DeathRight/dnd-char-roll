@@ -1,6 +1,6 @@
 import { CheckIcon, ChevronDownIcon, ChevronUpIcon } from '@radix-ui/react-icons';
 import * as SelectPrimitive from '@radix-ui/react-select';
-import React, { Fragment, useMemo } from 'react';
+import React, { Fragment, useId, useMemo } from 'react';
 
 import { styled } from '../../stitches.config';
 
@@ -100,7 +100,7 @@ const StyledScrollDownButton = styled(
     scrollButtonStyles
 );
 
-// Exports
+/* --------------------------------- Exports -------------------------------- */
 export const Select = SelectPrimitive.Root;
 export const SelectTrigger = StyledTrigger;
 export const SelectValue = SelectPrimitive.Value;
@@ -116,130 +116,8 @@ export const SelectSeparator = StyledSeparator;
 export const SelectScrollUpButton = StyledScrollUpButton;
 export const SelectScrollDownButton = StyledScrollDownButton;
 
-// Your app...
+/* -------------------------------- Component ------------------------------- */
 const Box = styled("div", {});
-
-export const SelectDemo = () => (
-    <Box>
-        <Select defaultValue="blueberry">
-            <SelectTrigger aria-label="Food">
-                <SelectValue />
-                <SelectIcon>
-                    <ChevronDownIcon />
-                </SelectIcon>
-            </SelectTrigger>
-            <SelectContent>
-                <SelectScrollUpButton>
-                    <ChevronUpIcon />
-                </SelectScrollUpButton>
-                <SelectViewport>
-                    <SelectGroup>
-                        <SelectLabel>Fruits</SelectLabel>
-                        <SelectItem value="apple">
-                            <SelectItemText>Apple</SelectItemText>
-                            <SelectItemIndicator>
-                                <CheckIcon />
-                            </SelectItemIndicator>
-                        </SelectItem>
-                        <SelectItem value="banana">
-                            <SelectItemText>Banana</SelectItemText>
-                            <SelectItemIndicator>
-                                <CheckIcon />
-                            </SelectItemIndicator>
-                        </SelectItem>
-                        <SelectItem value="blueberry">
-                            <SelectItemText>Blueberry</SelectItemText>
-                            <SelectItemIndicator>
-                                <CheckIcon />
-                            </SelectItemIndicator>
-                        </SelectItem>
-                        <SelectItem value="grapes">
-                            <SelectItemText>Grapes</SelectItemText>
-                            <SelectItemIndicator>
-                                <CheckIcon />
-                            </SelectItemIndicator>
-                        </SelectItem>
-                        <SelectItem value="pineapple">
-                            <SelectItemText>Pineapple</SelectItemText>
-                            <SelectItemIndicator>
-                                <CheckIcon />
-                            </SelectItemIndicator>
-                        </SelectItem>
-                    </SelectGroup>
-
-                    <SelectSeparator />
-
-                    <SelectGroup>
-                        <SelectLabel>Vegetables</SelectLabel>
-                        <SelectItem value="aubergine">
-                            <SelectItemText>Aubergine</SelectItemText>
-                            <SelectItemIndicator>
-                                <CheckIcon />
-                            </SelectItemIndicator>
-                        </SelectItem>
-                        <SelectItem value="broccoli">
-                            <SelectItemText>Broccoli</SelectItemText>
-                            <SelectItemIndicator>
-                                <CheckIcon />
-                            </SelectItemIndicator>
-                        </SelectItem>
-                        <SelectItem value="carrot" disabled>
-                            <SelectItemText>Carrot</SelectItemText>
-                            <SelectItemIndicator>
-                                <CheckIcon />
-                            </SelectItemIndicator>
-                        </SelectItem>
-                        <SelectItem value="courgette">
-                            <SelectItemText>Courgette</SelectItemText>
-                            <SelectItemIndicator>
-                                <CheckIcon />
-                            </SelectItemIndicator>
-                        </SelectItem>
-                        <SelectItem value="leek">
-                            <SelectItemText>leek</SelectItemText>
-                            <SelectItemIndicator>
-                                <CheckIcon />
-                            </SelectItemIndicator>
-                        </SelectItem>
-                    </SelectGroup>
-
-                    <SelectSeparator />
-
-                    <SelectGroup>
-                        <SelectLabel>Meat</SelectLabel>
-                        <SelectItem value="beef">
-                            <SelectItemText>Beef</SelectItemText>
-                            <SelectItemIndicator>
-                                <CheckIcon />
-                            </SelectItemIndicator>
-                        </SelectItem>
-                        <SelectItem value="chicken">
-                            <SelectItemText>Chicken</SelectItemText>
-                            <SelectItemIndicator>
-                                <CheckIcon />
-                            </SelectItemIndicator>
-                        </SelectItem>
-                        <SelectItem value="lamb">
-                            <SelectItemText>Lamb</SelectItemText>
-                            <SelectItemIndicator>
-                                <CheckIcon />
-                            </SelectItemIndicator>
-                        </SelectItem>
-                        <SelectItem value="pork">
-                            <SelectItemText>Pork</SelectItemText>
-                            <SelectItemIndicator>
-                                <CheckIcon />
-                            </SelectItemIndicator>
-                        </SelectItem>
-                    </SelectGroup>
-                </SelectViewport>
-                <SelectScrollDownButton>
-                    <ChevronDownIcon />
-                </SelectScrollDownButton>
-            </SelectContent>
-        </Select>
-    </Box>
-);
 
 type CategoryList = [string, string[]];
 function isListCategoryList(
@@ -262,6 +140,7 @@ export const SelectList = (
         Pick<SelectPrimitive.SelectTriggerProps, "aria-label">
 ) => {
     const { children, "aria-label": ariaLabel, list = [""], ...spread } = props;
+    const baseKey = useId();
 
     const List = useMemo(() => {
         if (isListCategoryList(list)) {
@@ -269,21 +148,28 @@ export const SelectList = (
             return (
                 <>
                     {l.map((c, i) => {
+                        const cKey = `${baseKey}:${i.toString()}`;
+
                         const cName = c[0];
                         const cList = c[1];
 
                         const isLast = i === l.length - 1;
 
-                        const CategoryItems = cList.map((item) => (
-                            <Fragment>
-                                <SelectItem value={item.toLowerCase()}>
-                                    <SelectItemText>{item}</SelectItemText>
-                                    <SelectItemIndicator>
-                                        <CheckIcon />
-                                    </SelectItemIndicator>
-                                </SelectItem>
-                            </Fragment>
-                        ));
+                        const CategoryItems = cList.map((item) => {
+                            const l = item.toLowerCase();
+                            const key = `${cKey}:${l}`;
+
+                            return (
+                                <Fragment>
+                                    <SelectItem key={key} value={l}>
+                                        <SelectItemText>{item}</SelectItemText>
+                                        <SelectItemIndicator>
+                                            <CheckIcon />
+                                        </SelectItemIndicator>
+                                    </SelectItem>
+                                </Fragment>
+                            );
+                        });
 
                         return (
                             <Fragment>
@@ -302,20 +188,25 @@ export const SelectList = (
             const l = list as string[];
             return (
                 <>
-                    {l.map((item) => (
-                        <Fragment>
-                            <SelectItem value={item.toLowerCase()}>
-                                <SelectItemText>{item}</SelectItemText>
-                                <SelectItemIndicator>
-                                    <CheckIcon />
-                                </SelectItemIndicator>
-                            </SelectItem>
-                        </Fragment>
-                    ))}
+                    {l.map((item) => {
+                        const l = item.toLowerCase();
+                        const key = `${baseKey}:${l}`;
+
+                        return (
+                            <Fragment>
+                                <SelectItem key={key} value={l}>
+                                    <SelectItemText>{item}</SelectItemText>
+                                    <SelectItemIndicator>
+                                        <CheckIcon />
+                                    </SelectItemIndicator>
+                                </SelectItem>
+                            </Fragment>
+                        );
+                    })}
                 </>
             );
         }
-    }, [list]);
+    }, [baseKey, list]);
 
     return (
         <Box>

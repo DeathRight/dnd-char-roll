@@ -1,7 +1,9 @@
 import * as RadioGroupP from '@radix-ui/react-radio-group';
 import React, { AriaAttributes } from 'react';
+import Roll from 'roll';
 
 import { Sex } from '.';
+import backgrounds from './backgrounds';
 
 export type StyledPrimitive =
     | keyof JSX.IntrinsicElements
@@ -110,6 +112,8 @@ export interface NameInputProps {
     regen?: number;
     onChange?: (value: string) => void;
     htmlFor?: string;
+    value?: string;
+    shown?: boolean;
     text: string;
 }
 
@@ -118,7 +122,57 @@ export interface NameGenInputProps {
     onFirstChange?: (name: string) => void;
     onLastChange?: (name: string) => void;
     regen?: number;
+    firstValue?: string;
+    lastValue?: string;
+    shown?: boolean;
 }
+/* ---------------------------------- Forms --------------------------------- */
+export const StatNames = [
+    "Strength",
+    "Dexterity",
+    "Constitution",
+    "Wisdom",
+    "Intelligence",
+    "Charisma",
+] as const;
+export type Character = {
+    [k in typeof StatNames[number]]: number;
+} & {
+    sex: Sex;
+    age: number;
+    firstName: string;
+    lastName: string;
+    background: typeof backgrounds[number];
+    stats: ReturnType<Roll["roll"]>[];
+};
+export interface CharacterGenFormProps extends AriaAttributes {
+    /**
+     * default: 1
+     */
+    minAge?: number;
+    /**
+     * default: 60
+     */
+    maxAge?: number;
+    /**
+     * default: '4d6b3'. (Roll 4 d6 and drop lowest)
+     */
+    statRoll?: string;
+    /**
+     * Whether form is shown
+     * default: true
+     */
+    shown?: boolean;
+    /**
+     * `Character` object value. To be used along with `onChange`
+     */
+    value?: Character;
+    /**
+     * Called on initial generation, then every regeneration
+     */
+    onChange?: (char: Character) => void;
+}
+
 /* ------------------------------------ * ----------------------------------- */
 
 export interface TooltipProps extends AppProps {

@@ -1,4 +1,4 @@
-const backgrounds: string[] = [
+const backgrounds = [
     "Acolyte",
     "Anthropologist",
     "Archaeologist",
@@ -46,6 +46,6 @@ const backgrounds: string[] = [
     "Volstrucker Agent",
     "Waterdhavian Agent",
     "Witchlight Hand",
-];
+] as const;
 
 export default backgrounds;

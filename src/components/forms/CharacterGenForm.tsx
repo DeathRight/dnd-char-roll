@@ -1,15 +1,17 @@
 import { UpdateIcon } from '@radix-ui/react-icons';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import Roll from 'roll';
 
+import useIsFirstRender from '../../hooks/useIsFirstRender';
 import { styled } from '../../stitches.config';
-import { properNounAll, Sex } from '../../util';
+import { genName, properNoun, Sex } from '../../util';
 import backgrounds from '../../util/backgrounds';
+import { Character, CharacterGenFormProps, StatNames } from '../../util/component-props';
 import Center from '../common/Center';
 import Divider from '../common/Divider';
 import Flex from '../common/Flex';
 import RadioGroup, { RadioItem } from '../common/RadioGroup';
-import SelectDemo, { SelectList } from '../common/SelectList';
+import { SelectList } from '../common/SelectList';
 import { useTheme } from '../contexts/ThemeContextProvider';
 import IconButton from '../IconButton';
 import CopyableTextArea from '../inputs/CopyableTextArea';
@@ -42,28 +44,29 @@ const randomInt = (a = 1, b = 0) => {
     return Math.floor(lower + Math.random() * (upper - lower + 1));
 };
 
-const StatNames = [
-    "Strength",
-    "Dexterity",
-    "Constitution",
-    "Wisdom",
-    "Intelligence",
-    "Charisma",
-];
-
-const CharacterGenForm = () => {
+const CharacterGenForm = (props: CharacterGenFormProps) => {
+    const {
+        minAge = 1,
+        maxAge = 60,
+        statRoll = "4d6b3",
+        shown = true,
+        value,
+        onChange,
+        ...ariaProps
+    } = props;
     const theme = useTheme();
 
+    const [regen, setRegen] = useState(0);
+    /* --------------------------------- Biology -------------------------------- */
     const [sex, setSex] = useState(Math.round(Math.random()) as Sex);
-    const [minAge, setMinAge] = useState(1);
-    const [maxAge, setMaxAge] = useState(60);
     const [age, setAge] = useState(randomInt(minAge, maxAge));
 
+    /* ------------------------------- Background ------------------------------- */
     const [background, setBackground] = useState(
         backgrounds[randomInt(0, backgrounds.length - 1)]
     );
 
-    const [statRoll, setStatRoll] = useState("4d6b3");
+    /* ---------------------------------- Stats --------------------------------- */
     const rollStats = () => {
         const a = [];
         for (let i = 0; i < StatNames.length; i++) {
@@ -74,38 +77,58 @@ const CharacterGenForm = () => {
     };
     const [stats, setStats] = useState(() => rollStats());
 
-    const [regen, setRegen] = useState(0);
-    const [firstName, setFirstName] = useState("");
-    const [lastName, setLastName] = useState("");
+    /* ---------------------------------- Name ---------------------------------- */
+    const [gName, setGName] = useState(() => genName(sex));
+    const [firstName, setFirstName] = useState(properNoun(gName.first()));
+    const [lastName, setLastName] = useState(properNoun(gName.last()));
 
-    const json = useMemo(
+    /* ---------------------------------- JSON ---------------------------------- */
+    const char = useMemo(
         () =>
-            JSON.stringify(
-                {
-                    sex: sex,
-                    age: age,
-                    firstName: firstName,
-                    lastName: lastName,
-                    background: background,
-                    ...(() => {
-                        let o: { [k: string]: number } = {};
-                        stats.forEach((v, i) => (o[StatNames[i]] = v.result));
-                        return o;
-                    })(),
-                },
-                null,
-                " "
-            ),
+            ({
+                sex: sex,
+                age: age,
+                firstName: firstName,
+                lastName: lastName,
+                background: background,
+                stats: stats,
+                ...(() => {
+                    let o: { [k: string]: number } = {};
+                    stats.forEach((v, i) => (o[StatNames[i]] = v.result));
+                    return o;
+                })(),
+            } as Character),
         [sex, age, firstName, lastName, stats, background]
     );
+    const json = useMemo(() => JSON.stringify(char, null, " "), [char]);
 
+    /* -------------------------------- useEffect ------------------------------- */
+    const isFirstRender = useIsFirstRender();
+    useEffect(() => {
+        if (value && isFirstRender) {
+            setSex(value.sex);
+            setAge(value.age);
+            setFirstName(value.firstName);
+            setLastName(value.lastName);
+            setBackground(value.background);
+            setStats(value.stats);
+        }
+    }, [value, isFirstRender]);
+
+    useEffect(() => {
+        if (onChange) {
+            onChange(char);
+        }
+    }, [char, onChange]);
+
+    /* ------------------------------- Stats Comp ------------------------------- */
     const StatsTable = useMemo(
         () => (
             <StyledTable>
                 <StyledTBody>
                     {stats.map((v, i) => {
                         const rolled = v.calculations[1] as unknown as number[];
-                        // Typing is wrong, console.log reveals calculations = [number, number[]]
+                        // ? Typing is wrong, console.log reveals calculations = [number, number[]]
                         return (
                             <tr>
                                 <td>{StatNames[i]}</td>
@@ -122,8 +145,13 @@ const CharacterGenForm = () => {
         [stats]
     );
 
-    return (
-        <Center as={"form"} onSubmit={(e: any) => e.preventDefault()}>
+    /* --------------------------------- Render --------------------------------- */
+    return shown ? (
+        <Center
+            as={"form"}
+            onSubmit={(e: any) => e.preventDefault()}
+            {...ariaProps}
+        >
             <Divider label="Biology" />
             <Flex>
                 <RadioGroup
@@ -154,6 +182,8 @@ const CharacterGenForm = () => {
             <NameGenInput
                 sex={sex}
                 onFirstChange={(n) => setFirstName(n)}
+                firstValue={firstName}
+                lastValue={lastName}
                 onLastChange={(n) => setLastName(n)}
                 regen={regen}
             />
@@ -161,9 +191,9 @@ const CharacterGenForm = () => {
             <Flex>
                 <SelectList
                     aria-label="Background"
-                    list={backgrounds}
+                    list={backgrounds as unknown as string[]}
                     value={background.toLowerCase()}
-                    onValueChange={(v) => setBackground(properNounAll(v))}
+                    onValueChange={(v) => setBackground(v as typeof background)}
                 />
             </Flex>
             <Divider label="Stats" />
@@ -196,6 +226,18 @@ const CharacterGenForm = () => {
                 />
             </Flex>
         </Center>
+    ) : (
+        <>
+            <NameGenInput
+                sex={sex}
+                onFirstChange={(n) => setFirstName(n)}
+                firstValue={firstName}
+                onLastChange={(n) => setLastName(n)}
+                lastValue={lastName}
+                regen={regen}
+                shown={false}
+            />
+        </>
     );
 };
 

@@ -3,6 +3,8 @@ import * as LabelPrim from '@radix-ui/react-label';
 import React, { useId } from 'react';
 import { useEffect, useState } from 'react';
 
+import useIsFirstRender from '../../hooks/useIsFirstRender';
+import useUpdateEffect from '../../hooks/useUpdateEffect';
 import { styled } from '../../stitches.config';
 import { properNoun } from '../../util';
 import { NameInputProps } from '../../util/component-props';
@@ -19,26 +21,51 @@ const Label = styled(LabelPrim.Root, {
 });
 
 const NameInput = (props: NameInputProps) => {
-    const { gen, regen, htmlFor, text, onChange } = props;
-    const [name, setName] = useState("");
+    const { gen, regen, htmlFor, text, onChange, value, shown = true } = props;
+    const [name, setName] = useState(value ?? "");
+
+    const isFirst = useIsFirstRender();
+
     const uid = useId();
     const hF = htmlFor ?? uid;
 
     useEffect(() => {
-        const n = properNoun(gen());
-        setName(n);
-        onChange?.(n);
+        if (isFirst) {
+            if (!value) {
+                const n = properNoun(gen());
+                if (value === undefined) setName(n);
+                onChange?.(n);
+            }
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [isFirst]);
+
+    useUpdateEffect(() => {
+        if (isFirst && value) {
+            return;
+        } else if (!isFirst) {
+            const n = properNoun(gen());
+            if (value === undefined) setName(n);
+            onChange?.(n);
+            console.log("WHY IS THIS HAPPENING");
+        }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [regen]);
+
+    useUpdateEffect(() => {
+        if (value) {
+            setName(value);
+        }
+    }, [value]);
 
     const onInputChange = (v: string) => {
         if (v !== name) {
             onChange?.(v);
-            setName(v);
+            if (value === undefined) setName(v);
         }
     };
 
-    return (
+    return shown ? (
         <Flex>
             <div>
                 <Label htmlFor={hF}>{text}</Label>
@@ -56,6 +83,8 @@ const NameInput = (props: NameInputProps) => {
                 tooltip={`Regenerate ${text}`}
             />
         </Flex>
+    ) : (
+        <></>
     );
 };
 

@@ -15,6 +15,9 @@ const NameGenInput = (props: NameGenInputProps) => {
         onFirstChange,
         onLastChange,
         regen: _regen,
+        firstValue,
+        lastValue,
+        shown = true,
     } = props;
 
     const [regen, setRegen] = useState(_regen ?? 0);
@@ -32,7 +35,7 @@ const NameGenInput = (props: NameGenInputProps) => {
         doRegen(_regen);
     }, [_regen]);
 
-    return (
+    return shown ? (
         <Center style={{ flexGrow: "unset", flexShrink: "unset" }}>
             <NameInput
                 gen={gName.first}
@@ -40,6 +43,7 @@ const NameGenInput = (props: NameGenInputProps) => {
                 text="First Name"
                 regen={regen}
                 onChange={(v) => onFirstChange?.(v)}
+                value={firstValue}
             />
             <NameInput
                 gen={gName.last}
@@ -47,6 +51,7 @@ const NameGenInput = (props: NameGenInputProps) => {
                 text="Last Name"
                 regen={regen}
                 onChange={(v) => onLastChange?.(v)}
+                value={lastValue}
             />
             <Flex>
                 <IconButton
@@ -65,6 +70,27 @@ const NameGenInput = (props: NameGenInputProps) => {
                 />
             </Flex>
         </Center>
+    ) : (
+        <>
+            <NameInput
+                gen={gName.first}
+                htmlFor="firstName"
+                text="First Name"
+                regen={regen}
+                onChange={(v) => onFirstChange?.(v)}
+                value={firstValue}
+                shown={false}
+            />
+            <NameInput
+                gen={gName.last}
+                htmlFor="lastName"
+                text="Last Name"
+                regen={regen}
+                onChange={(v) => onLastChange?.(v)}
+                value={lastValue}
+                shown={false}
+            />
+        </>
     );
 };
 
