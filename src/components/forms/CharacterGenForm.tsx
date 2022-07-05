@@ -2,7 +2,7 @@ import { UpdateIcon } from '@radix-ui/react-icons';
 import { useEffect, useMemo, useState } from 'react';
 import Roll from 'roll';
 
-import useIsFirstRender from '../../hooks/useIsFirstRender';
+import useUpdateEffect from '../../hooks/useUpdateEffect';
 import { styled } from '../../stitches.config';
 import { genName, properNoun, Sex } from '../../util';
 import backgrounds from '../../util/backgrounds';
@@ -56,14 +56,15 @@ const CharacterGenForm = (props: CharacterGenFormProps) => {
     } = props;
     const theme = useTheme();
 
-    const [regen, setRegen] = useState(0);
     /* --------------------------------- Biology -------------------------------- */
-    const [sex, setSex] = useState(Math.round(Math.random()) as Sex);
-    const [age, setAge] = useState(randomInt(minAge, maxAge));
+    const [sex, setSex] = useState(
+        value?.sex ?? (Math.round(Math.random()) as Sex)
+    );
+    const [age, setAge] = useState(value?.age ?? randomInt(minAge, maxAge));
 
     /* ------------------------------- Background ------------------------------- */
     const [background, setBackground] = useState(
-        backgrounds[randomInt(0, backgrounds.length - 1)]
+        value?.background ?? backgrounds[randomInt(0, backgrounds.length - 1)]
     );
 
     /* ---------------------------------- Stats --------------------------------- */
@@ -75,12 +76,17 @@ const CharacterGenForm = (props: CharacterGenFormProps) => {
 
         return a;
     };
-    const [stats, setStats] = useState(() => rollStats());
+    const [stats, setStats] = useState(() => value?.stats ?? rollStats());
 
     /* ---------------------------------- Name ---------------------------------- */
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [gName, setGName] = useState(() => genName(sex));
-    const [firstName, setFirstName] = useState(properNoun(gName.first()));
-    const [lastName, setLastName] = useState(properNoun(gName.last()));
+    const [firstName, setFirstName] = useState(
+        value?.firstName ?? properNoun(gName.first())
+    );
+    const [lastName, setLastName] = useState(
+        value?.lastName ?? properNoun(gName.last())
+    );
 
     /* ---------------------------------- JSON ---------------------------------- */
     const char = useMemo(
@@ -103,9 +109,8 @@ const CharacterGenForm = (props: CharacterGenFormProps) => {
     const json = useMemo(() => JSON.stringify(char, null, " "), [char]);
 
     /* -------------------------------- useEffect ------------------------------- */
-    const isFirstRender = useIsFirstRender();
-    useEffect(() => {
-        if (value && isFirstRender) {
+    useUpdateEffect(() => {
+        if (value && value !== char) {
             setSex(value.sex);
             setAge(value.age);
             setFirstName(value.firstName);
@@ -113,7 +118,7 @@ const CharacterGenForm = (props: CharacterGenFormProps) => {
             setBackground(value.background);
             setStats(value.stats);
         }
-    }, [value, isFirstRender]);
+    }, [value]);
 
     useEffect(() => {
         if (onChange) {
@@ -181,11 +186,14 @@ const CharacterGenForm = (props: CharacterGenFormProps) => {
             <Divider label="Name Generator" />
             <NameGenInput
                 sex={sex}
-                onFirstChange={(n) => setFirstName(n)}
+                onFirstChange={(n) => {
+                    if (n !== firstName) setFirstName(n);
+                }}
                 firstValue={firstName}
+                onLastChange={(n) => {
+                    if (n !== lastName) setLastName(n);
+                }}
                 lastValue={lastName}
-                onLastChange={(n) => setLastName(n)}
-                regen={regen}
             />
             <Divider label="Background" />
             <Flex>
@@ -204,10 +212,12 @@ const CharacterGenForm = (props: CharacterGenFormProps) => {
                 aria-label={"Regenerate Character"}
                 tooltip={"Regenerate Character"}
                 onClick={(e) => {
-                    setRegen(Math.random() + regen);
-                    setSex(Math.round(Math.random()));
+                    const nSex = Math.round(Math.random());
+                    setSex(nSex);
                     setAge(randomInt(minAge, maxAge));
+
                     setStats(rollStats());
+
                     setBackground(
                         backgrounds[randomInt(0, backgrounds.length - 1)]
                     );
@@ -234,7 +244,6 @@ const CharacterGenForm = (props: CharacterGenFormProps) => {
                 firstValue={firstName}
                 onLastChange={(n) => setLastName(n)}
                 lastValue={lastName}
-                regen={regen}
                 shown={false}
             />
         </>

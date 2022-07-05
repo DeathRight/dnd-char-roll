@@ -2,7 +2,7 @@ import { ReloadIcon, UpdateIcon } from '@radix-ui/react-icons';
 import { useState } from 'react';
 
 import useUpdateEffect from '../../hooks/useUpdateEffect';
-import { genName, Sex } from '../../util';
+import { genName, properNoun, Sex } from '../../util';
 import { NameGenInputProps } from '../../util/component-props';
 import Center from '../common/Center';
 import Flex from '../common/Flex';
@@ -14,26 +14,38 @@ const NameGenInput = (props: NameGenInputProps) => {
         sex = Sex.Female,
         onFirstChange,
         onLastChange,
-        regen: _regen,
         firstValue,
         lastValue,
         shown = true,
     } = props;
 
-    const [regen, setRegen] = useState(_regen ?? 0);
+    const [_sex, setSex] = useState(sex);
     const [gName, setGName] = useState(() => genName(sex));
+    const [first, setFirst] = useState(firstValue ?? "");
+    const [last, setLast] = useState(lastValue ?? "");
 
-    const doRegen = (r?: number) => setRegen(r ?? Math.random() + regen);
+    const doRegen = () => {
+        const nFirst = properNoun(gName.first());
+        const nLast = properNoun(gName.last());
+        onFirstChange?.(nFirst);
+        onLastChange?.(nLast);
+        if (!firstValue) setFirst(nFirst);
+        if (!lastValue) setLast(nLast);
+    };
 
     useUpdateEffect(() => {
-        setGName(genName(sex));
+        if (sex !== _sex) {
+            setSex(sex);
+            setGName(genName(sex));
+        }
+
+        if (firstValue && first !== firstValue) setFirst(firstValue);
+        if (lastValue && last !== lastValue) setLast(lastValue);
+    }, [sex, firstValue, lastValue]);
+
+    useUpdateEffect(() => {
         doRegen();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [sex]);
-
-    useUpdateEffect(() => {
-        doRegen(_regen);
-    }, [_regen]);
+    }, [_sex]);
 
     return shown ? (
         <Center style={{ flexGrow: "unset", flexShrink: "unset" }}>
@@ -41,17 +53,15 @@ const NameGenInput = (props: NameGenInputProps) => {
                 gen={gName.first}
                 htmlFor="firstName"
                 text="First Name"
-                regen={regen}
                 onChange={(v) => onFirstChange?.(v)}
-                value={firstValue}
+                value={first}
             />
             <NameInput
                 gen={gName.last}
                 htmlFor="lastName"
                 text="Last Name"
-                regen={regen}
                 onChange={(v) => onLastChange?.(v)}
-                value={lastValue}
+                value={last}
             />
             <Flex>
                 <IconButton
@@ -76,18 +86,16 @@ const NameGenInput = (props: NameGenInputProps) => {
                 gen={gName.first}
                 htmlFor="firstName"
                 text="First Name"
-                regen={regen}
                 onChange={(v) => onFirstChange?.(v)}
-                value={firstValue}
+                value={first}
                 shown={false}
             />
             <NameInput
                 gen={gName.last}
                 htmlFor="lastName"
                 text="Last Name"
-                regen={regen}
                 onChange={(v) => onLastChange?.(v)}
-                value={lastValue}
+                value={last}
                 shown={false}
             />
         </>

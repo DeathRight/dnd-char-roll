@@ -109,7 +109,6 @@ export interface NumberInputProps
 
 export interface NameInputProps {
     gen: () => string;
-    regen?: number;
     onChange?: (value: string) => void;
     htmlFor?: string;
     value?: string;
@@ -121,7 +120,6 @@ export interface NameGenInputProps {
     sex?: Sex;
     onFirstChange?: (name: string) => void;
     onLastChange?: (name: string) => void;
-    regen?: number;
     firstValue?: string;
     lastValue?: string;
     shown?: boolean;

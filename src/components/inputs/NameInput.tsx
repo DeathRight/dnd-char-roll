@@ -21,7 +21,7 @@ const Label = styled(LabelPrim.Root, {
 });
 
 const NameInput = (props: NameInputProps) => {
-    const { gen, regen, htmlFor, text, onChange, value, shown = true } = props;
+    const { gen, htmlFor, text, onChange, value, shown = true } = props;
     const [name, setName] = useState(value ?? "");
 
     const isFirst = useIsFirstRender();
@@ -41,25 +41,13 @@ const NameInput = (props: NameInputProps) => {
     }, [isFirst]);
 
     useUpdateEffect(() => {
-        if (isFirst && value) {
-            return;
-        } else if (!isFirst) {
-            const n = properNoun(gen());
-            if (value === undefined) setName(n);
-            onChange?.(n);
-            console.log("WHY IS THIS HAPPENING");
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [regen]);
-
-    useUpdateEffect(() => {
-        if (value) {
+        if (value && value !== name) {
             setName(value);
         }
     }, [value]);
 
     const onInputChange = (v: string) => {
-        if (v !== name) {
+        if (v !== name || (value && v !== value)) {
             onChange?.(v);
             if (value === undefined) setName(v);
         }
