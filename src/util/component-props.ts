@@ -124,26 +124,8 @@ export interface NameGenInputProps {
     lastValue?: string;
     shown?: boolean;
 }
-/* ---------------------------------- Forms --------------------------------- */
-export const StatNames = [
-    "Strength",
-    "Dexterity",
-    "Constitution",
-    "Wisdom",
-    "Intelligence",
-    "Charisma",
-] as const;
-export type Character = {
-    [k in typeof StatNames[number]]: number;
-} & {
-    sex: Sex;
-    age: number;
-    firstName: string;
-    lastName: string;
-    background: typeof backgrounds[number];
-    stats: ReturnType<Roll["roll"]>[];
-};
-export interface CharacterGenFormProps extends AriaAttributes {
+/* ------------------------ CharacterContextProvider ------------------------ */
+export interface CharacterContextProviderProps extends AppProps {
     /**
      * default: 1
      */
@@ -165,6 +147,30 @@ export interface CharacterGenFormProps extends AriaAttributes {
      * `Character` object value. To be used along with `onChange`
      */
     value?: Character;
+}
+/* ------------------------------------ * ----------------------------------- */
+/* ---------------------------------- Forms --------------------------------- */
+export const StatNames = [
+    "Strength",
+    "Dexterity",
+    "Constitution",
+    "Wisdom",
+    "Intelligence",
+    "Charisma",
+] as const;
+export type Character = {
+    [k in typeof StatNames[number]]: number;
+} & {
+    sex: Sex;
+    age: number;
+    firstName: string;
+    lastName: string;
+    background: typeof backgrounds[number];
+    stats: ReturnType<Roll["roll"]>[];
+};
+export interface CharacterGenFormProps
+    extends AriaAttributes,
+        CharacterContextProviderProps {
     /**
      * Called on initial generation, then every regeneration
      */
