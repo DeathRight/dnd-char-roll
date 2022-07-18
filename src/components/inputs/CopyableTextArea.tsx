@@ -1,15 +1,15 @@
-import { blackA } from '@radix-ui/colors';
-import { CheckIcon, CopyIcon } from '@radix-ui/react-icons';
-import React, { useRef } from 'react';
-import { useEffect, useState } from 'react';
+import { blackA } from "@radix-ui/colors";
+import { CheckIcon, CopyIcon } from "@radix-ui/react-icons";
+import React, { useRef } from "react";
+import { useEffect, useState } from "react";
 
-import useCopyToClipboard from '../../hooks/useCopyToClipboard';
-import { styled } from '../../stitches.config';
-import { CopyableTextAreaProps } from '../../util/component-props';
-import Button from '../common/Button';
-import Center from '../common/Center';
-import { useTheme } from '../contexts/ThemeContextProvider';
-import IconMorph from '../IconMorph';
+import useCopyToClipboard from "../../hooks/useCopyToClipboard";
+import { styled } from "../../stitches.config";
+import { CopyableTextAreaProps } from "../../util/component-props";
+import Button from "../common/Button";
+import Center from "../common/Center";
+import { useTheme } from "../contexts/ThemeContextProvider";
+import IconMorph from "../IconMorph";
 
 const Input = styled("textarea", {
     all: "unset",
@@ -33,17 +33,7 @@ const RightDiv = styled(Center, {
     flexGrow: "unset",
     position: "relative",
 });
-const StyledIconButton = styled(Button, {
-    borderWidth: "0",
-    position: "absolute",
-    bottom: "0",
-    right: "0",
-    width: "auto",
-    paddingLeft: "6px",
-    paddingRight: "6px",
-    marginTop: "auto",
-    marginRight: "$4",
-    boxShadow: "none",
+const StyledIconButton = styled("button", {
     backgroundColor: "transparent",
     "&:hover": {
         backgroundColor: "$hover",
@@ -55,6 +45,28 @@ const StyledIconButton = styled(Button, {
     "&:disabled": {
         backgroundColor: "$select",
     },
+    borderWidth: "0",
+    position: "absolute",
+    bottom: "0px",
+    right: "0px",
+    width: "auto",
+    margin: "$1",
+    padding: "$3",
+    paddingLeft: "6px",
+    paddingRight: "6px",
+    marginTop: "auto",
+    marginRight: "$4",
+    boxShadow: "none",
+    fontSize: "$md",
+    color: "$hiC",
+    height: "$4",
+    borderRadius: "$2",
+    borderColor: "$a7",
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    cursor: "pointer",
 });
 
 const CopyableTextArea = (props: CopyableTextAreaProps) => {

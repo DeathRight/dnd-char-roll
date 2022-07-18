@@ -12,15 +12,20 @@ export namespace NameReducer {
         lastName: string;
         gen: ReturnType<typeof genName>;
     };
-    export type Action = { type: Actions; payload?: Sex | State };
+    export type Action = { type: Actions; payload?: Sex | State | string };
     export type Dispatch = (action: Action) => void;
 
     export const reducer = (state: State, action: Action): State => {
         let { gen } = state;
+        let pl: string | undefined;
+
+        if (action.payload) {
+            if (typeof action.payload === "number")
+                gen = genName(action.payload);
+            else if (typeof action.payload === "string") pl = action.payload;
+        }
         switch (action.type) {
             case "full": {
-                if (action.payload && typeof action.payload === "number")
-                    gen = genName(action.payload);
                 return {
                     firstName: properNoun(gen.first()),
                     lastName: properNoun(gen.last()),
@@ -28,10 +33,18 @@ export namespace NameReducer {
                 };
             }
             case "first": {
-                return { ...state, firstName: properNoun(gen.first()) };
+                return {
+                    ...state,
+                    gen,
+                    firstName: properNoun(pl ?? gen.first()),
+                };
             }
             case "last": {
-                return { ...state, lastName: properNoun(gen.last()) };
+                return {
+                    ...state,
+                    gen,
+                    lastName: properNoun(pl ?? gen.last()),
+                };
             }
             case "set": {
                 if (action.payload && typeof action.payload === "object")
@@ -70,11 +83,10 @@ type BgState = Constize<
     "background",
     "setBackground"
 >;
-type StatsState = Constize<
-    Stateful<ReturnType<Roll["roll"]>[]>,
-    "stats",
-    "setStats"
->;
+type StatsState = {
+    stats: ReturnType<Roll["roll"]>[];
+    rerollStats: () => void;
+};
 
 export type State = SexState &
     AgeState &

@@ -1,8 +1,8 @@
-import { blackA, mauve, violet } from '@radix-ui/colors';
-import * as AccordionPrimitive from '@radix-ui/react-accordion';
-import { ChevronDownIcon } from '@radix-ui/react-icons';
-import { keyframes, styled } from '@stitches/react';
-import React, { useId } from 'react';
+import { blackA, mauve, violet } from "@radix-ui/colors";
+import * as AccordionPrimitive from "@radix-ui/react-accordion";
+import { ChevronDownIcon } from "@radix-ui/react-icons";
+import { keyframes, styled } from "@stitches/react";
+import React, { useId } from "react";
 
 const slideDown = keyframes({
     from: { height: 0 },
@@ -16,8 +16,8 @@ const slideUp = keyframes({
 
 const StyledAccordion = styled(AccordionPrimitive.Root, {
     borderRadius: 6,
-    width: 300,
-    backgroundColor: mauve.mauve6,
+    //width: 300,
+    backgroundColor: "$active",
     boxShadow: `0 2px 10px ${blackA.blackA4}`,
 });
 
@@ -39,7 +39,7 @@ const StyledItem = styled(AccordionPrimitive.Item, {
     "&:focus-within": {
         position: "relative",
         zIndex: 1,
-        boxShadow: `0 0 0 2px ${mauve.mauve12}`,
+        boxShadow: "0 0 0 1px",
     },
 });
 
@@ -60,18 +60,20 @@ const StyledTrigger = styled(AccordionPrimitive.Trigger, {
     justifyContent: "space-between",
     fontSize: 15,
     lineHeight: 1,
-    color: violet.violet11,
-    boxShadow: `0 1px 0 ${mauve.mauve6}`,
-    '&[data-state="closed"]': { backgroundColor: "white" },
-    '&[data-state="open"]': { backgroundColor: "white" },
-    "&:hover": { backgroundColor: mauve.mauve2 },
+    color: "$a",
+    boxShadow: `0 1px 0 $select`,
+    cursor: "pointer",
+    //'&[data-state="closed"]': { backgroundColor: "$active" },
+    '&[data-state="open"]': { backgroundColor: "$attActive", color: "$attA" },
+    "&:hover": { backgroundColor: "$hover" },
+    "$:active": { backgroundColor: "$select" },
 });
 
 const StyledContent = styled(AccordionPrimitive.Content, {
     overflow: "hidden",
     fontSize: 15,
-    color: mauve.mauve11,
-    backgroundColor: mauve.mauve2,
+    color: "$attHiC",
+    backgroundColor: "$cardBg",
 
     '&[data-state="open"]': {
         animation: `${slideDown} 300ms cubic-bezier(0.87, 0, 0.13, 1) forwards`,
@@ -86,7 +88,7 @@ const StyledContentText = styled("div", {
 });
 
 const StyledChevron = styled(ChevronDownIcon, {
-    color: violet.violet10,
+    //color: "$attA",
     transition: "transform 300ms cubic-bezier(0.87, 0, 0.13, 1)",
     "[data-state=open] &": { transform: "rotate(180deg)" },
 });

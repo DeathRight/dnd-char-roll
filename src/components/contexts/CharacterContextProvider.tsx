@@ -1,6 +1,6 @@
-import { useMemo, useReducer, useState } from "react";
+import { useContext, useMemo, useReducer, useState } from "react";
 import Roll from "roll";
-import {
+import CharacterContext, {
     CharacterProvider,
     NameReducer,
     State,
@@ -46,15 +46,23 @@ export const CharacterContextProvider = (
     );
 
     /* ---------------------------------- Stats --------------------------------- */
-    const rollStats = () => {
+    const rollStats = (input: string) => {
         const a = [];
         for (let i = 0; i < StatNames.length; i++) {
-            a.push(roll.roll(statRoll));
+            a.push(roll.roll(input));
         }
 
         return a;
     };
-    const [stats, setStats] = useState(() => value?.stats ?? rollStats());
+
+    // ? Passed to state instead of setStats directly for components to reroll stats
+    const rerollStats = useMemo(
+        () => () => setStats(rollStats(statRoll)),
+        [statRoll]
+    );
+    const [stats, setStats] = useState(
+        () => value?.stats ?? rollStats(statRoll)
+    );
 
     /* ---------------------------------- Names --------------------------------- */
     const [gName] = useState(() => genName(sex));
@@ -94,12 +102,12 @@ export const CharacterContextProvider = (
             background,
             setBackground,
             stats,
-            setStats,
+            rerollStats,
             name,
             dispatchName,
             char,
         }),
-        [age, background, char, name, sex, stats]
+        [age, background, char, name, rerollStats, sex, stats]
     );
 
     useUpdateEffect(() => {
@@ -120,4 +128,39 @@ export const CharacterContextProvider = (
     }, [value]);
 
     return <CharacterProvider value={state}>{children}</CharacterProvider>;
+};
+export default CharacterContextProvider;
+
+/* ------------------------------ Custom Hooks ------------------------------ */
+const HookError = (name: string) =>
+    new Error(`${name} must be used within a CharacterProvider!`);
+
+export const useCharName = () => {
+    const context = useContext(CharacterContext);
+    if (!context) throw HookError("useCharName");
+
+    const { name, dispatchName } = context;
+    const genMethods = (pl?: Sex | string) => ({
+        full: () => dispatchName({ type: "full", payload: pl }),
+        first: () => dispatchName({ type: "first", payload: pl }),
+        last: () => dispatchName({ type: "last", payload: pl }),
+        seed: (sex: Sex) =>
+            dispatchName({
+                type: "set",
+                payload: {
+                    firstName: name.firstName,
+                    lastName: name.lastName,
+                    gen: genName(sex),
+                },
+            }),
+    });
+
+    return [name, genMethods] as const;
+};
+
+export const useCharacter = () => {
+    const context = useContext(CharacterContext);
+    if (!context) throw HookError("useCharacter");
+
+    return context;
 };

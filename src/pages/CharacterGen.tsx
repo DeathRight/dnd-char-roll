@@ -1,16 +1,20 @@
-import { Portal } from '@radix-ui/react-portal';
-import { useCallback, useMemo, useState } from 'react';
+import { Portal } from "@radix-ui/react-portal";
+import { useCallback, useMemo, useState } from "react";
 
-import { Accordion, AccordionListItem } from '../components/common/Accordion';
-import Button from '../components/common/Button';
-import Card from '../components/common/Card';
-import Divider from '../components/common/Divider';
-import CharacterGenForm from '../components/forms/CharacterGenForm';
-import NumberInput from '../components/inputs/NumberInput';
-import { Character, CharacterGenFormProps } from '../util/component-props';
+import { Accordion, AccordionListItem } from "../components/common/Accordion";
+import Button from "../components/common/Button";
+import Card from "../components/common/Card";
+import Divider from "../components/common/Divider";
+import CharacterContextProvider from "../components/contexts/CharacterContextProvider";
+import CharacterGenForm from "../components/forms/CharacterGenForm";
+import NumberInput from "../components/inputs/NumberInput";
+import {
+    Character,
+    CharacterContextProviderProps,
+} from "../util/component-props";
 
 const CharacterAccordionItem = (
-    props: Omit<CharacterGenFormProps, "onChange"> & {
+    props: Omit<CharacterContextProviderProps, "value"> & {
         index: number;
         onChange: (i: number, char: Character) => void;
     }
@@ -22,17 +26,22 @@ const CharacterAccordionItem = (
         <>
             {char === undefined && (
                 <Portal>
-                    <CharacterGenForm
-                        shown={false}
+                    <CharacterContextProvider
                         minAge={minAge}
                         maxAge={maxAge}
                         statRoll={statRoll}
                         value={char}
-                        onChange={(c) => {
-                            setChar(c);
-                            onChange(index, c);
-                        }}
-                    />
+                    >
+                        <CharacterGenForm
+                            shown={false}
+                            minAge={minAge}
+                            maxAge={maxAge}
+                            onChange={(c) => {
+                                setChar(c);
+                                onChange(index, c);
+                            }}
+                        />
+                    </CharacterContextProvider>
                 </Portal>
             )}
             <AccordionListItem
@@ -40,16 +49,21 @@ const CharacterAccordionItem = (
                     char ? `${char.firstName} ${char.lastName}` : "(loading...)"
                 }
             >
-                <CharacterGenForm
+                <CharacterContextProvider
                     minAge={minAge}
                     maxAge={maxAge}
                     statRoll={statRoll}
                     value={char}
-                    onChange={(c: Character) => {
-                        setChar(c);
-                        onChange(index, c);
-                    }}
-                />
+                >
+                    <CharacterGenForm
+                        minAge={minAge}
+                        maxAge={maxAge}
+                        onChange={(c) => {
+                            setChar(c);
+                            onChange(index, c);
+                        }}
+                    />
+                </CharacterContextProvider>
             </AccordionListItem>
         </>
     );

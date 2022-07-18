@@ -1,9 +1,9 @@
-import * as RadioGroupP from '@radix-ui/react-radio-group';
-import React, { AriaAttributes } from 'react';
-import Roll from 'roll';
+import * as RadioGroupP from "@radix-ui/react-radio-group";
+import React, { AriaAttributes } from "react";
+import Roll from "roll";
 
-import { Sex } from '.';
-import backgrounds from './backgrounds';
+import { Sex } from ".";
+import backgrounds from "./backgrounds";
 
 export type StyledPrimitive =
     | keyof JSX.IntrinsicElements
@@ -108,8 +108,8 @@ export interface NumberInputProps
 }
 
 export interface NameInputProps {
-    gen: () => string;
     onChange?: (value: string) => void;
+    onClick?: () => void;
     htmlFor?: string;
     value?: string;
     shown?: boolean;
@@ -117,11 +117,6 @@ export interface NameInputProps {
 }
 
 export interface NameGenInputProps {
-    sex?: Sex;
-    onFirstChange?: (name: string) => void;
-    onLastChange?: (name: string) => void;
-    firstValue?: string;
-    lastValue?: string;
     shown?: boolean;
 }
 /* ------------------------ CharacterContextProvider ------------------------ */
@@ -139,12 +134,7 @@ export interface CharacterContextProviderProps extends AppProps {
      */
     statRoll?: string;
     /**
-     * Whether form is shown
-     * default: true
-     */
-    shown?: boolean;
-    /**
-     * `Character` object value. To be used along with `onChange`
+     * `Character` object value. To be used along with `onChange` in form
      */
     value?: Character;
 }
@@ -170,11 +160,16 @@ export type Character = {
 };
 export interface CharacterGenFormProps
     extends AriaAttributes,
-        CharacterContextProviderProps {
+        Omit<CharacterContextProviderProps, "value" | "statRoll"> {
     /**
      * Called on initial generation, then every regeneration
      */
     onChange?: (char: Character) => void;
+    /**
+     * Whether form is shown
+     * default: true
+     */
+    shown?: boolean;
 }
 
 /* ------------------------------------ * ----------------------------------- */
