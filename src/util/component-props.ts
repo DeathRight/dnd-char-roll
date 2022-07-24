@@ -189,3 +189,12 @@ export interface CharacterGenPageSettings
 export interface TooltipProps extends AppProps {
     text: string;
 }
+
+export type DnDListItem = { id: string; text: string };
+export interface HeaderDnDListProps {
+    /**
+     * The initial list. This should not change.
+     */
+    list: DnDListItem[];
+    onChange?: (list: DnDListItem[]) => void;
+}

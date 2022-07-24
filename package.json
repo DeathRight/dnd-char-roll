@@ -3,6 +3,7 @@
     "version": "0.1.0",
     "private": true,
     "dependencies": {
+        "@fast-csv/format": "^4.3.5",
         "@radix-ui/colors": "^0.1.8",
         "@radix-ui/react-accordion": "^0.1.7-rc.38",
         "@radix-ui/react-icons": "^1.1.1",
@@ -24,8 +25,10 @@
         "@types/jest": "^27.5.1",
         "@types/node": "^16.11.35",
         "@types/react": "^18.0.9",
+        "@types/react-beautiful-dnd": "^13.1.2",
         "@types/react-dom": "^18.0.4",
         "react": "^18.1.0",
+        "react-beautiful-dnd": "^13.1.0",
         "react-dom": "^18.1.0",
         "react-overlays": "^5.1.2",
         "react-scripts": "5.0.1",

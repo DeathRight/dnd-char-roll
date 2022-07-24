@@ -8,10 +8,13 @@ import Divider from "../components/common/Divider";
 import CharacterContextProvider from "../components/contexts/CharacterContextProvider";
 import CharacterGenForm from "../components/forms/CharacterGenForm";
 import NumberInput from "../components/inputs/NumberInput";
+import { properNoun } from "../util";
 import {
     Character,
     CharacterContextProviderProps,
     CharacterGenPageSettings,
+    DnDListItem,
+    StatNames,
 } from "../util/component-props";
 
 /* ----------------------------- Sub Components ----------------------------- */
@@ -74,6 +77,20 @@ const Settings = (props: CharacterGenPageSettings) => {
     const [statRoll, setStatRoll] = useState(_statRoll);
     const [minAge, setMinAge] = useState(_minAge);
     const [maxAge, setMaxAge] = useState(_maxAge);
+
+    const headersFlat = [
+        "sex",
+        "age",
+        "firstName",
+        "lastName",
+        "background",
+        ...StatNames,
+    ];
+    const [headers, setHeaders] = useState<DnDListItem[]>(
+        headersFlat.map((v) => ({ id: v, text: properNoun(v) }))
+    );
+    // TODO: add header DnD list component to reorder headers for CSV formatting
+    // TODO: add format characters to CSV functionality
 
     const onSubmit = () => {
         onChange({ amount, minAge, maxAge, statRoll });

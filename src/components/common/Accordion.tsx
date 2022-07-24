@@ -1,4 +1,4 @@
-import { blackA, mauve, violet } from "@radix-ui/colors";
+import { blackA } from "@radix-ui/colors";
 import * as AccordionPrimitive from "@radix-ui/react-accordion";
 import { ChevronDownIcon } from "@radix-ui/react-icons";
 import { keyframes, styled } from "@stitches/react";
@@ -89,12 +89,10 @@ const StyledContentText = styled("div", {
 });
 
 const StyledChevron = styled(ChevronDownIcon, {
-    //color: "$attA",
+    paddingLeft: "$1",
     transition: "transform 300ms cubic-bezier(0.87, 0, 0.13, 1)",
     "[data-state=open] &": { transform: "rotate(180deg)" },
 });
-
-// TODO: change colors to theme colors
 
 // Exports
 export const Accordion = StyledAccordion;
@@ -138,38 +136,9 @@ export const AccordionListItem = (props: AccordionListItemProps) => {
     // Use generated unique ID as value (key) if a value is not provided
 
     return (
-        <AccordionItem value={key} {...spread}>
+        <AccordionItem key={key} value={key} {...spread}>
             <AccordionTrigger>{title}</AccordionTrigger>
             <AccordionContent>{children}</AccordionContent>
         </AccordionItem>
     );
 };
-
-// Your app...
-/*export const AccordionDemo = () => (
-    <Accordion type="single" defaultValue="item-1" collapsible>
-        <AccordionItem value="item-1">
-            <AccordionTrigger>Is it accessible?</AccordionTrigger>
-            <AccordionContent>
-                Yes. It adheres to the WAI-ARIA design pattern.
-            </AccordionContent>
-        </AccordionItem>
-
-        <AccordionItem value="item-2">
-            <AccordionTrigger>Is it unstyled?</AccordionTrigger>
-            <AccordionContent>
-                Yes. It's unstyled by default, giving you freedom over the look
-                and feel.
-            </AccordionContent>
-        </AccordionItem>
-
-        <AccordionItem value="item-3">
-            <AccordionTrigger>Can it be animated?</AccordionTrigger>
-            <AccordionContent>
-                Yes! You can animate the Accordion with CSS or JavaScript.
-            </AccordionContent>
-        </AccordionItem>
-    </Accordion>
-);
-
-export default AccordionDemo;*/

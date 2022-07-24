@@ -1,11 +1,14 @@
-import './App.css';
+import "./App.css";
 
-import Center from './components/common/Center';
-import { useDarkModeState, useTheme } from './components/contexts/ThemeContextProvider';
-import ToggleTheme from './components/ToggleThemeButton';
-import CharacterGenPage from './pages/CharacterGen';
-import { styled } from './stitches.config';
-import globalStyles from './styles/globalStyles';
+import Center from "./components/common/Center";
+import {
+    useDarkModeState,
+    useTheme,
+} from "./components/contexts/ThemeContextProvider";
+import ToggleTheme from "./components/ToggleThemeButton";
+import CharacterGenPage from "./pages/CharacterGen";
+import { styled } from "./stitches.config";
+import globalStyles from "./styles/globalStyles";
 
 const AppWrapper = styled("div", {
     backgroundColor: "$appBg",
@@ -29,6 +32,10 @@ const Header = styled("div", {
     width: "100%",
     backgroundColor: "$appBg",
     boxShadow: "$1",
+    border: "none",
+    borderBottomStyle: "solid",
+    borderBottomWidth: "1px",
+    borderBottomColor: "$p6",
     zIndex: "$4",
 });
 
@@ -40,7 +47,7 @@ function App() {
     return (
         <AppWrapper className={theme}>
             <Header>
-                <h2>D&D Character Generator</h2>
+                <h2 style={{ marginLeft: "4px" }}>D&D Character Generator</h2>
                 <ToggleTheme
                     defaultPressed={darkMode}
                     onPressed={(p) => setDarkMode(p)}
