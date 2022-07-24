@@ -1,70 +1,92 @@
-import { ReloadIcon, UpdateIcon } from '@radix-ui/react-icons';
-import { useState } from 'react';
+import { ReloadIcon, UpdateIcon } from "@radix-ui/react-icons";
+import { useState } from "react";
 
-import useUpdateEffect from '../../hooks/useUpdateEffect';
-import { genName, Sex } from '../../util';
-import { NameGenInputProps } from '../../util/component-props';
-import Center from '../common/Center';
-import Flex from '../common/Flex';
-import IconButton from '../IconButton';
-import NameInput from './NameInput';
+import useUpdateEffect from "../../hooks/useUpdateEffect";
+import { NameGenInputProps } from "../../util/component-props";
+import Center from "../common/Center";
+import Flex from "../common/Flex";
+import {
+    useCharacter,
+    useCharName,
+} from "../contexts/CharacterContextProvider";
+import IconButton from "../IconButton";
+import NameInput from "./NameInput";
 
 const NameGenInput = (props: NameGenInputProps) => {
-    const {
-        sex = Sex.Female,
-        onFirstChange,
-        onLastChange,
-        regen: _regen,
-    } = props;
+    const { shown = true } = props;
 
-    const [regen, setRegen] = useState(_regen ?? 0);
-    const [gName, setGName] = useState(() => genName(sex));
-
-    const doRegen = (r?: number) => setRegen(r ?? Math.random() + regen);
+    const { sex } = useCharacter();
+    const [_sex, setSex] = useState(sex);
+    const [name, genName] = useCharName();
 
     useUpdateEffect(() => {
-        setGName(genName(sex));
-        doRegen();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
+        if (_sex !== sex) {
+            setSex(sex);
+        }
     }, [sex]);
 
     useUpdateEffect(() => {
-        doRegen(_regen);
-    }, [_regen]);
+        genName(_sex).full();
+    }, [_sex]);
 
-    return (
+    return shown ? (
         <Center style={{ flexGrow: "unset", flexShrink: "unset" }}>
             <NameInput
-                gen={gName.first}
                 htmlFor="firstName"
                 text="First Name"
-                regen={regen}
-                onChange={(v) => onFirstChange?.(v)}
+                onChange={(v) => {
+                    if (name.firstName !== v) genName(v).first();
+                }}
+                onClick={() => genName().first()}
+                value={name.firstName}
             />
             <NameInput
-                gen={gName.last}
                 htmlFor="lastName"
                 text="Last Name"
-                regen={regen}
-                onChange={(v) => onLastChange?.(v)}
+                onChange={(v) => {
+                    if (name.lastName !== v) genName(v).last();
+                }}
+                onClick={() => genName().last()}
+                value={name.lastName}
             />
             <Flex>
                 <IconButton
                     icon={UpdateIcon}
                     aria-label="Regenerate both names"
-                    onClick={() => doRegen()}
+                    onClick={() => genName().full()}
                     width="100%"
                     tooltip="Regenerate both names"
                 />
                 <IconButton
                     icon={ReloadIcon}
                     aria-label="Regenerate seed"
-                    onClick={() => setGName(genName(sex))}
+                    onClick={() => genName().seed(sex)}
                     width="100%"
                     tooltip="Regenerate seed"
                 />
             </Flex>
         </Center>
+    ) : (
+        <>
+            <NameInput
+                htmlFor="firstName"
+                text="First Name"
+                onChange={(v) => {
+                    if (name.firstName !== v) genName(v).first();
+                }}
+                value={name.firstName}
+                shown={false}
+            />
+            <NameInput
+                htmlFor="lastName"
+                text="Last Name"
+                onChange={(v) => {
+                    if (name.lastName !== v) genName(v).last();
+                }}
+                value={name.lastName}
+                shown={false}
+            />
+        </>
     );
 };
 

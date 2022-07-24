@@ -1,7 +1,9 @@
-import * as RadioGroupP from '@radix-ui/react-radio-group';
-import React, { AriaAttributes } from 'react';
+import * as RadioGroupP from "@radix-ui/react-radio-group";
+import React, { AriaAttributes } from "react";
+import Roll from "roll";
 
-import { Sex } from '.';
+import { Sex } from ".";
+import backgrounds from "./backgrounds";
 
 export type StyledPrimitive =
     | keyof JSX.IntrinsicElements
@@ -106,21 +108,99 @@ export interface NumberInputProps
 }
 
 export interface NameInputProps {
-    gen: () => string;
-    regen?: number;
     onChange?: (value: string) => void;
+    onClick?: () => void;
     htmlFor?: string;
+    value?: string;
+    shown?: boolean;
     text: string;
 }
 
 export interface NameGenInputProps {
-    sex?: Sex;
-    onFirstChange?: (name: string) => void;
-    onLastChange?: (name: string) => void;
-    regen?: number;
+    shown?: boolean;
 }
+
+export interface SaveToCSVProps {
+    headers: DnDListItem[];
+    data: object[];
+}
+/* ------------------------ CharacterContextProvider ------------------------ */
+export interface CharacterContextProviderProps extends AppProps {
+    /**
+     * default: 1
+     */
+    minAge?: number;
+    /**
+     * default: 60
+     */
+    maxAge?: number;
+    /**
+     * default: '4d6b3'. (Roll 4 d6 and drop lowest)
+     */
+    statRoll?: string;
+    /**
+     * `Character` object value. To be used along with `onChange` in form
+     */
+    value?: Character;
+}
+/* ------------------------------------ * ----------------------------------- */
+/* ---------------------------------- Forms --------------------------------- */
+export const StatNames = [
+    "Strength",
+    "Dexterity",
+    "Constitution",
+    "Wisdom",
+    "Intelligence",
+    "Charisma",
+] as const;
+export type Character = {
+    [k in typeof StatNames[number]]: number;
+} & {
+    sex: Sex;
+    age: number;
+    firstName: string;
+    lastName: string;
+    background: typeof backgrounds[number];
+    stats: ReturnType<Roll["roll"]>[];
+};
+export interface CharacterGenFormProps
+    extends AriaAttributes,
+        Omit<CharacterContextProviderProps, "value" | "statRoll"> {
+    /**
+     * Called on initial generation, then every regeneration
+     */
+    onChange?: (char: Character) => void;
+    /**
+     * Whether form is shown
+     * default: true
+     */
+    shown?: boolean;
+}
+
+export interface CharacterGenPageSettings
+    extends Required<
+        Omit<CharacterContextProviderProps, "value" | "children">
+    > {
+    onChange: (state: {
+        amount: number;
+        minAge: number;
+        maxAge: number;
+        statRoll: string;
+    }) => void;
+    characters: (Character | undefined)[];
+}
+
 /* ------------------------------------ * ----------------------------------- */
 
 export interface TooltipProps extends AppProps {
     text: string;
+}
+
+export type DnDListItem = { key: string; label: string };
+export interface HeaderDnDListProps {
+    /**
+     * The initial list. This should not change.
+     */
+    list: DnDListItem[];
+    onChange?: (list: DnDListItem[]) => void;
 }

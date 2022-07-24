@@ -1,14 +1,11 @@
-import { UpdateIcon } from '@radix-ui/react-icons';
-import * as LabelPrim from '@radix-ui/react-label';
-import React, { useId } from 'react';
-import { useEffect, useState } from 'react';
-
-import { styled } from '../../stitches.config';
-import { properNoun } from '../../util';
-import { NameInputProps } from '../../util/component-props';
-import Flex from '../common/Flex';
-import IconButton from '../IconButton';
-import CopyableInput from './CopyableInput';
+import { UpdateIcon } from "@radix-ui/react-icons";
+import * as LabelPrim from "@radix-ui/react-label";
+import React, { useId } from "react";
+import { styled } from "../../stitches.config";
+import { NameInputProps } from "../../util/component-props";
+import Flex from "../common/Flex";
+import IconButton from "../IconButton";
+import CopyableInput from "./CopyableInput";
 
 const Label = styled(LabelPrim.Root, {
     fontSize: "$md",
@@ -19,43 +16,31 @@ const Label = styled(LabelPrim.Root, {
 });
 
 const NameInput = (props: NameInputProps) => {
-    const { gen, regen, htmlFor, text, onChange } = props;
-    const [name, setName] = useState("");
+    const { htmlFor, text, onChange, onClick, value, shown = true } = props;
+
     const uid = useId();
     const hF = htmlFor ?? uid;
 
-    useEffect(() => {
-        const n = properNoun(gen());
-        setName(n);
-        onChange?.(n);
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [regen]);
-
-    const onInputChange = (v: string) => {
-        if (v !== name) {
-            onChange?.(v);
-            setName(v);
-        }
-    };
-
-    return (
+    return shown ? (
         <Flex>
             <div>
                 <Label htmlFor={hF}>{text}</Label>
                 <CopyableInput
                     id={hF}
-                    value={name}
-                    onChange={(e) => onInputChange(e.currentTarget.value)}
+                    value={value}
+                    onChange={(e) => onChange?.(e.currentTarget.value)}
                     tag={text}
                 />
             </div>
             <IconButton
                 icon={UpdateIcon}
                 aria-label={`Regenerate ${text}`}
-                onClick={() => onInputChange(properNoun(gen()))}
+                onClick={() => onClick?.()}
                 tooltip={`Regenerate ${text}`}
             />
         </Flex>
+    ) : (
+        <></>
     );
 };
 
