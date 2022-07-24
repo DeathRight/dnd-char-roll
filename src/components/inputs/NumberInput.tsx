@@ -1,13 +1,13 @@
-import { blackA } from '@radix-ui/colors';
-import * as LabelPrim from '@radix-ui/react-label';
-import React, { useEffect, useId, useState } from 'react';
+import { blackA } from "@radix-ui/colors";
+import * as LabelPrim from "@radix-ui/react-label";
+import React, { useEffect, useId, useState } from "react";
 
-import { styled } from '../../stitches.config';
-import { NumberInputProps } from '../../util/component-props';
-import Flex from '../common/Flex';
-import Popover from '../common/Popover';
-import Slider from '../common/Slider';
-import IconButton from '../IconButton';
+import { styled } from "../../stitches.config";
+import { NumberInputProps } from "../../util/component-props";
+import Flex from "../common/Flex";
+import Popover from "../common/Popover";
+import Slider from "../common/Slider";
+import IconButton from "../IconButton";
 
 const Input = styled("input", {
     all: "unset",

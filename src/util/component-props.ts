@@ -119,6 +119,11 @@ export interface NameInputProps {
 export interface NameGenInputProps {
     shown?: boolean;
 }
+
+export interface SaveToCSVProps {
+    headers: DnDListItem[];
+    data: object[];
+}
 /* ------------------------ CharacterContextProvider ------------------------ */
 export interface CharacterContextProviderProps extends AppProps {
     /**
@@ -182,6 +187,7 @@ export interface CharacterGenPageSettings
         maxAge: number;
         statRoll: string;
     }) => void;
+    characters: (Character | undefined)[];
 }
 
 /* ------------------------------------ * ----------------------------------- */
@@ -190,7 +196,7 @@ export interface TooltipProps extends AppProps {
     text: string;
 }
 
-export type DnDListItem = { id: string; text: string };
+export type DnDListItem = { key: string; label: string };
 export interface HeaderDnDListProps {
     /**
      * The initial list. This should not change.

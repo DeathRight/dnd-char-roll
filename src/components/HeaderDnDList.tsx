@@ -6,14 +6,40 @@ import { DnDListItem, HeaderDnDListProps } from "../util/component-props";
 import Flex from "./common/Flex";
 import { StrictModeDroppable } from "./common/StrictModeDroppable";
 
-const HeaderContent = Flex;
+const HeaderDiv = styled("div", {
+    display: "inline-flex",
+    flexWrap: "nowrap",
+    alignItems: "center",
+    flexDirection: "row",
+    overflowX: "auto",
+    width: "100%",
+
+    borderWidth: "$1",
+    borderStyle: "solid",
+    borderColor: "$attSelect",
+});
+const HeaderContent = styled("div", {
+    display: "flex",
+    alignItems: "center",
+    padding: "$1",
+    "&:first-child": { borderLeftColor: "transparent" },
+    "&:last-child": { borderRightColor: "transparent" },
+    borderLeftWidth: "$1",
+    borderRightWidth: "$1",
+    borderStyle: "solid",
+    borderColor: "$attSelect",
+    borderTopColor: "transparent",
+    borderBottomColor: "transparent",
+    userSelect: "none",
+    cursor: "grab",
+});
 
 const HeaderItem = (props: { value: DnDListItem; index: number }) => {
     const { value, index } = props;
-    const { id, text } = value;
+    const { key: id, label: text } = value;
 
     return (
-        <Draggable draggableId={id} index={index}>
+        <Draggable key={id} draggableId={id} index={index}>
             {(provided) => (
                 <HeaderContent
                     ref={provided.innerRef}
@@ -38,10 +64,8 @@ const HeaderList = React.memo((props: { list: DnDListItem[] }) => {
 });
 
 const reorder = (list: any[], startIndex: number, endIndex: number) => {
-    const result = Array.from(list);
-    const [removed] = result.splice(startIndex, 1);
-    result.splice(endIndex, 0, removed);
-
+    const result = new Array(...list);
+    result.splice(endIndex, 0, result.splice(startIndex, 1)[0]);
     return result;
 };
 
@@ -70,14 +94,13 @@ const HeaderDnDList = (props: HeaderDnDListProps) => {
                 direction={"horizontal"}
             >
                 {(provided) => (
-                    <Flex
-                        style={{ flexDirection: "row" }}
+                    <HeaderDiv
                         ref={provided.innerRef}
                         {...provided.droppableProps}
                     >
                         <HeaderList list={items} />
                         {provided.placeholder}
-                    </Flex>
+                    </HeaderDiv>
                 )}
             </StrictModeDroppable>
         </DragDropContext>

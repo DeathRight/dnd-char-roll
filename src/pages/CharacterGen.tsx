@@ -1,5 +1,5 @@
 import { Portal } from "@radix-ui/react-portal";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { Accordion, AccordionListItem } from "../components/common/Accordion";
 import Button from "../components/common/Button";
@@ -7,7 +7,10 @@ import Card from "../components/common/Card";
 import Divider from "../components/common/Divider";
 import CharacterContextProvider from "../components/contexts/CharacterContextProvider";
 import CharacterGenForm from "../components/forms/CharacterGenForm";
+import HeaderDnDList from "../components/HeaderDnDList";
 import NumberInput from "../components/inputs/NumberInput";
+import SaveToCSV from "../components/inputs/SaveToCSV";
+import useUpdateEffect from "../hooks/useUpdateEffect";
 import { properNoun } from "../util";
 import {
     Character,
@@ -58,6 +61,7 @@ const CharacterAccordionItem = (
                     char ? `${char.firstName} ${char.lastName}` : "(loading...)"
                 }
                 key={id}
+                value={id}
             >
                 {char && <>{CharComp}</>}
             </AccordionListItem>
@@ -71,6 +75,7 @@ const Settings = (props: CharacterGenPageSettings) => {
         maxAge: _maxAge,
         statRoll: _statRoll,
         onChange,
+        characters,
     } = props;
 
     const [amount, setAmount] = useState(1);
@@ -78,7 +83,30 @@ const Settings = (props: CharacterGenPageSettings) => {
     const [minAge, setMinAge] = useState(_minAge);
     const [maxAge, setMaxAge] = useState(_maxAge);
 
-    const headersFlat = [
+    const formatChars = (ca: typeof characters) => {
+        if (ca && ca[0]) {
+            return ca.map((v) => {
+                if (!v) return {} as object;
+                const { stats: _stats, ...obj } = v;
+                return obj;
+            });
+        }
+    };
+
+    const [chars, setChars] = useState(formatChars(characters));
+
+    useEffect(() => {
+        if (characters !== chars)
+            setChars(
+                characters.map((v) => {
+                    const { stats: _stats, ...obj } = v!;
+                    return obj;
+                })
+            );
+    }, [characters, chars]);
+
+    /* ------------------------------- CSV Headers ------------------------------ */
+    const headersFlatInit = [
         "sex",
         "age",
         "firstName",
@@ -87,43 +115,51 @@ const Settings = (props: CharacterGenPageSettings) => {
         ...StatNames,
     ];
     const [headers, setHeaders] = useState<DnDListItem[]>(
-        headersFlat.map((v) => ({ id: v, text: properNoun(v) }))
+        headersFlatInit.map((v) => ({ key: v, label: properNoun(v) }))
     );
-    // TODO: add header DnD list component to reorder headers for CSV formatting
-    // TODO: add format characters to CSV functionality
 
+    /* --------------------------------- Render --------------------------------- */
     const onSubmit = () => {
         onChange({ amount, minAge, maxAge, statRoll });
     };
 
     return (
-        <Card>
-            <h2>Settings</h2>
-            <Divider />
-            <NumberInput
-                defaultValue={1}
-                min={1}
-                max={100}
-                text={"Amount"}
-                onChange={(v) => setAmount(v)}
-            />
-            <Divider label={"Character"} />
-            <NumberInput
-                defaultValue={1}
-                min={1}
-                max={60}
-                text={"Min Age"}
-                onChange={(v) => setMinAge(v)}
-            />
-            <NumberInput
-                defaultValue={60}
-                min={1}
-                max={100}
-                text={"Max Age"}
-                onChange={(v) => setMaxAge(v)}
-            />
-            <Button onClick={() => onSubmit()}>Submit</Button>
-        </Card>
+        <>
+            <Card>
+                <h2>Settings</h2>
+                <Divider />
+                <NumberInput
+                    defaultValue={1}
+                    min={1}
+                    max={100}
+                    text={"Amount"}
+                    onChange={(v) => setAmount(v)}
+                />
+                <Divider label={"Character"} />
+                <NumberInput
+                    defaultValue={1}
+                    min={1}
+                    max={60}
+                    text={"Min Age"}
+                    onChange={(v) => setMinAge(v)}
+                />
+                <NumberInput
+                    defaultValue={60}
+                    min={1}
+                    max={100}
+                    text={"Max Age"}
+                    onChange={(v) => setMaxAge(v)}
+                />
+                <Button onClick={() => onSubmit()}>Submit</Button>
+            </Card>
+            <Card style={{ maxWidth: "90%" }}>
+                <h2>CSV</h2>
+                <Divider label={"Headers Order"} />
+                <HeaderDnDList list={headers} onChange={(l) => setHeaders(l)} />
+                <Divider label={"Export"} />
+                <SaveToCSV headers={headers} data={chars as object[]} />
+            </Card>
+        </>
     );
 };
 
@@ -183,9 +219,10 @@ const CharacterGenPage = () => {
         setGenForms(createGenForms(cA));
     }, [amount, chars, createGenForms]);
 
-    return (
-        <>
+    const SettingsMemo = useMemo(
+        () => (
             <Settings
+                characters={chars}
                 minAge={minAge}
                 maxAge={maxAge}
                 statRoll={statRoll}
@@ -197,14 +234,22 @@ const CharacterGenPage = () => {
                         setStatRoll(state.statRoll);
                 }}
             />
+        ),
+        [amount, chars, maxAge, minAge, statRoll]
+    );
+
+    return (
+        <>
+            {SettingsMemo}
             <Card
                 css={{
                     backgroundColor: "transparent",
-                    margin: "0",
                     padding: "0",
                 }}
             >
-                <Accordion type="multiple">{genForms}</Accordion>
+                <Accordion type="single" defaultValue={"char0"}>
+                    {genForms}
+                </Accordion>
             </Card>
         </>
     );
