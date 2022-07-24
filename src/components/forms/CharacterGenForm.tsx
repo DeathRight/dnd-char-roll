@@ -62,7 +62,11 @@ const CharacterGenForm = (props: CharacterGenFormProps) => {
         rerollStats,
         char,
     } = useCharacter();
-    const json = useMemo(() => JSON.stringify(char, null, " "), [char]);
+
+    const json = useMemo(() => {
+        const { stats: _stats, ...jChar } = char; // We don't need stat calcs in viewable character
+        return JSON.stringify(jChar, null, " ");
+    }, [char]);
 
     useEffect(() => {
         if (onChange) {

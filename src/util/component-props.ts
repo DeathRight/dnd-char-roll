@@ -172,6 +172,18 @@ export interface CharacterGenFormProps
     shown?: boolean;
 }
 
+export interface CharacterGenPageSettings
+    extends Required<
+        Omit<CharacterContextProviderProps, "value" | "children">
+    > {
+    onChange: (state: {
+        amount: number;
+        minAge: number;
+        maxAge: number;
+        statRoll: string;
+    }) => void;
+}
+
 /* ------------------------------------ * ----------------------------------- */
 
 export interface TooltipProps extends AppProps {

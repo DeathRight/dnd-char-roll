@@ -17,7 +17,7 @@ const slideUp = keyframes({
 const StyledAccordion = styled(AccordionPrimitive.Root, {
     borderRadius: 6,
     //width: 300,
-    backgroundColor: "$active",
+    backgroundColor: "$cardBg",
     boxShadow: `0 2px 10px ${blackA.blackA4}`,
 });
 
@@ -51,7 +51,7 @@ const StyledHeader = styled(AccordionPrimitive.Header, {
 const StyledTrigger = styled(AccordionPrimitive.Trigger, {
     all: "unset",
     fontFamily: "inherit",
-    backgroundColor: "transparent",
+    backgroundColor: "$active",
     padding: "0 20px",
     height: 45,
     flex: 1,
@@ -74,6 +74,7 @@ const StyledContent = styled(AccordionPrimitive.Content, {
     fontSize: 15,
     color: "$attHiC",
     backgroundColor: "$cardBg",
+    marginTop: "1px",
 
     '&[data-state="open"]': {
         animation: `${slideDown} 300ms cubic-bezier(0.87, 0, 0.13, 1) forwards`,
