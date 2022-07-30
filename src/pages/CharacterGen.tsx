@@ -10,7 +10,6 @@ import CharacterGenForm from "../components/forms/CharacterGenForm";
 import HeaderDnDList from "../components/HeaderDnDList";
 import NumberInput from "../components/inputs/NumberInput";
 import SaveToCSV from "../components/inputs/SaveToCSV";
-import useUpdateEffect from "../hooks/useUpdateEffect";
 import { properNoun } from "../util";
 import {
     Character,
@@ -69,6 +68,7 @@ const CharacterAccordionItem = (
     );
 };
 
+// TODO: swap to SettingsContextProvider for streamlining
 const Settings = (props: CharacterGenPageSettings) => {
     const {
         minAge: _minAge,

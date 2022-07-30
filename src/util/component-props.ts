@@ -3,6 +3,7 @@ import React, { AriaAttributes } from "react";
 import Roll from "roll";
 
 import { Sex } from ".";
+import { parentStatsArray } from "../contexts/settings-context";
 import backgrounds from "./backgrounds";
 
 export type StyledPrimitive =
@@ -142,6 +143,31 @@ export interface CharacterContextProviderProps extends AppProps {
      * `Character` object value. To be used along with `onChange` in form
      */
     value?: Character;
+}
+/* ------------------------- SettingsContextProvider ------------------------ */
+export interface SettingsContextProviderProps
+    extends AppProps,
+        Omit<CharacterContextProviderProps, "value"> {
+    /**
+     * default: 1
+     */
+    amount?: number;
+    /**
+     * default: false
+     */
+    advStatSettings?: boolean;
+    /**
+     * default: undefined
+     */
+    parentAStats?: parentStatsArray;
+    /**
+     * default: undefined
+     */
+    parentBStats?: parentStatsArray;
+    /**
+     * `Characters` array of `Character` objects, used only in case of importing (not yet supported. is there a reason to?)
+     */
+    value?: (Character | undefined)[];
 }
 /* ------------------------------------ * ----------------------------------- */
 /* ---------------------------------- Forms --------------------------------- */

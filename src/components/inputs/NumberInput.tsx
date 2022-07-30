@@ -7,7 +7,6 @@ import { NumberInputProps } from "../../util/component-props";
 import Flex from "../common/Flex";
 import Popover from "../common/Popover";
 import Slider from "../common/Slider";
-import IconButton from "../IconButton";
 
 const Input = styled("input", {
     all: "unset",
@@ -32,12 +31,6 @@ const Label = styled(LabelPrim.Root, {
     color: "$loC",
     userSelect: "none",
     marginRight: "$4",
-});
-
-const StyledIconButton = styled(IconButton, {
-    maxWidth: "$3",
-    margin: "0 $1",
-    padding: "0",
 });
 
 type ValueType = string | readonly string[] | number;
@@ -124,7 +117,7 @@ const NumberInput = (props: NumberInputProps) => {
                             {...spread}
                         />
                     </Popover.Trigger>
-                    <Popover.Content>
+                    <Popover.Content hideWhenDetached>
                         <Slider
                             max={max}
                             min={min}

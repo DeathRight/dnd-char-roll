@@ -3,7 +3,6 @@ import { DragDropContext, Draggable, DropResult } from "react-beautiful-dnd";
 import useUpdateEffect from "../hooks/useUpdateEffect";
 import { styled } from "../stitches.config";
 import { DnDListItem, HeaderDnDListProps } from "../util/component-props";
-import Flex from "./common/Flex";
 import { StrictModeDroppable } from "./common/StrictModeDroppable";
 
 const HeaderDiv = styled("div", {
