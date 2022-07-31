@@ -15,6 +15,7 @@ type AdvStatSettingsState = Constize<
 >;
 
 export type parentStatsArray = [number, number, number, number, number, number];
+export type statsRangeObj = { min: parentStatsArray; max: parentStatsArray };
 
 type ParentAStatsState = {
     parentAStats: parentStatsArray | undefined;
@@ -41,9 +42,7 @@ export type State = CharactersState &
     AdvStatSettingsState &
     ParentAStatsState &
     ParentBStatsState & {
-        statsRange:
-            | { min: parentStatsArray; max: parentStatsArray }
-            | undefined;
+        statsRange: statsRangeObj | undefined;
     };
 
 export const SettingsContext = createContext<State | undefined>(undefined);

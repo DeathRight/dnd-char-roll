@@ -12,7 +12,7 @@ import {
 // ? `forEach` used instead of `for ... i < 6` for modular consistency
 const baseStatsArray = Array.from(StatNames);
 
-export const SettingsContextProvider = (
+export const GenSettingsContextProvider = (
     props: SettingsContextProviderProps
 ) => {
     const {
@@ -95,7 +95,7 @@ export const SettingsContextProvider = (
     return <SettingsProvider value={state}>{children}</SettingsProvider>;
 };
 
-export default SettingsContextProvider;
+export default GenSettingsContextProvider;
 
 export const useGenSettings = () => {
     const context = useContext(SettingsContext);

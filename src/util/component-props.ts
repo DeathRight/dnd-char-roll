@@ -1,9 +1,10 @@
 import * as RadioGroupP from "@radix-ui/react-radio-group";
+import * as CheckboxP from "@radix-ui/react-checkbox";
 import React, { AriaAttributes } from "react";
 import Roll from "roll";
 
 import { Sex } from ".";
-import { parentStatsArray } from "../contexts/settings-context";
+import { parentStatsArray, statsRangeObj } from "../contexts/settings-context";
 import backgrounds from "./backgrounds";
 
 export type StyledPrimitive =
@@ -82,6 +83,11 @@ export interface RadioGroupItemProps extends RadioGroupP.RadioGroupItemProps {
     label?: string;
     indicatorProps?: Omit<RadioGroupP.RadioGroupIndicatorProps, "children">;
 }
+/* -------------------------------- Checkbox -------------------------------- */
+export interface CheckboxProps extends CheckboxP.CheckboxProps {
+    label?: string;
+    indicatorProps?: Omit<CheckboxP.CheckboxIndicatorProps, "children">;
+}
 /* --------------------------------- Inputs --------------------------------- */
 export interface SignInFormProps {
     status: "loading" | "error" | "success";
@@ -92,6 +98,10 @@ export interface CopyableInputProps extends React.HTMLProps<HTMLInputElement> {
      * Descriptor to be used in the Copy Button's aria-label
      */
     tag?: string;
+}
+
+export interface TextInputProps extends CopyableInputProps {
+    label?: string;
 }
 
 export interface CopyableTextAreaProps
@@ -123,7 +133,6 @@ export interface NameGenInputProps {
 
 export interface SaveToCSVProps {
     headers: DnDListItem[];
-    data: object[];
 }
 /* ------------------------ CharacterContextProvider ------------------------ */
 export interface CharacterContextProviderProps extends AppProps {
@@ -139,6 +148,10 @@ export interface CharacterContextProviderProps extends AppProps {
      * default: '4d6b3'. (Roll 4 d6 and drop lowest)
      */
     statRoll?: string;
+    /**
+     * default: undefined
+     */
+    statRange?: statsRangeObj;
     /**
      * `Character` object value. To be used along with `onChange` in form
      */
@@ -187,7 +200,7 @@ export type Character = {
     firstName: string;
     lastName: string;
     background: typeof backgrounds[number];
-    stats: ReturnType<Roll["roll"]>[];
+    stats: ReturnType<Roll["roll"]>[] | number[];
 };
 export interface CharacterGenFormProps
     extends AriaAttributes,
@@ -203,17 +216,13 @@ export interface CharacterGenFormProps
     shown?: boolean;
 }
 
-export interface CharacterGenPageSettings
-    extends Required<
-        Omit<CharacterContextProviderProps, "value" | "children">
-    > {
+export interface CharacterGenPageSettings {
     onChange: (state: {
         amount: number;
         minAge: number;
         maxAge: number;
         statRoll: string;
     }) => void;
-    characters: (Character | undefined)[];
 }
 
 /* ------------------------------------ * ----------------------------------- */

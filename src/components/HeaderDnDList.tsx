@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useId, useState } from "react";
 import { DragDropContext, Draggable, DropResult } from "react-beautiful-dnd";
 import useUpdateEffect from "../hooks/useUpdateEffect";
 import { styled } from "../stitches.config";
@@ -53,10 +53,11 @@ const HeaderItem = (props: { value: DnDListItem; index: number }) => {
 };
 
 const HeaderList = React.memo((props: { list: DnDListItem[] }) => {
+    const uId = useId();
     return (
         <>
             {props.list.map((v, i) => (
-                <HeaderItem value={v} index={i} />
+                <HeaderItem key={`${uId}-${i}`} value={v} index={i} />
             ))}
         </>
     );

@@ -1,4 +1,4 @@
-import { createContext, Dispatch, SetStateAction } from "react";
+import { createContext } from "react";
 import Roll from "roll";
 
 import { genName, properNoun, Sex } from "../util";
@@ -70,7 +70,7 @@ type BgState = Constize<
     "setBackground"
 >;
 type StatsState = {
-    stats: ReturnType<Roll["roll"]>[];
+    stats: (number | ReturnType<Roll["roll"]>)[];
     rerollStats: () => void;
 };
 
