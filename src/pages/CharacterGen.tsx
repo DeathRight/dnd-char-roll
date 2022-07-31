@@ -131,7 +131,14 @@ const CharacterGenPage = () => {
         }
         // Rerender character gen forms
         setGenForms(createGenForms(cA));
-    }, [amount, characters, createGenForms, setCharacters]);
+    }, [
+        amount,
+        characters,
+        createGenForms,
+        setCharacters,
+        statRoll,
+        statsRange,
+    ]);
 
     return (
         <>

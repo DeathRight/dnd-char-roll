@@ -1,5 +1,6 @@
 import * as RadioGroupP from "@radix-ui/react-radio-group";
 import * as CheckboxP from "@radix-ui/react-checkbox";
+import * as DialogP from "@radix-ui/react-dialog";
 import React, { AriaAttributes } from "react";
 import Roll from "roll";
 
@@ -69,6 +70,10 @@ export const IconButtonPropsSpecific: PropsSpecific = {
     text: true,
 };
 /* --------------------------------- Dialog --------------------------------- */
+export interface DialogMenuProps extends DialogP.DialogProps {
+    title?: string;
+    description?: string;
+}
 export interface DialogProps extends PrimitiveProps {
     show: boolean;
     onHide: () => void;
