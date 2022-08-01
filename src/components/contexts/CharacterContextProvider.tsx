@@ -67,8 +67,7 @@ export const CharacterContextProvider = (
     // ? Passed to state instead of setStats directly for components to reroll stats
     const rerollStats = useMemo(
         () => () => setStats(rollStats(statRoll)),
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-        [statRoll]
+        [statRoll, rollStats]
     );
     const [stats, setStats] = useState<ReturnType<typeof rollStats> | number[]>(
         () => value?.stats ?? rollStats(statRoll)
@@ -107,7 +106,6 @@ export const CharacterContextProvider = (
             } as Character),
         [sex, age, name, stats, background]
     );
-    //const json = useMemo(() => JSON.stringify(char, null, " "), [char]);
 
     /* --------------------------------- Render --------------------------------- */
     const state: State = useMemo(

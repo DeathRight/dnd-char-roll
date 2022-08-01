@@ -74,15 +74,6 @@ export interface DialogMenuProps extends DialogP.DialogProps {
     title?: string;
     description?: string;
 }
-export interface DialogProps extends PrimitiveProps {
-    show: boolean;
-    onHide: () => void;
-}
-export const DialogPropsSpecific: PropsSpecific = {
-    ...PrimitivePropsSpecific,
-    show: true,
-    onHide: true,
-};
 /* ------------------------------- RadioGroup ------------------------------- */
 export interface RadioGroupItemProps extends RadioGroupP.RadioGroupItemProps {
     label?: string;
