@@ -1,5 +1,5 @@
 import React, { useMemo } from "react";
-import { violet, blackA, mauve, green } from "@radix-ui/colors";
+import { blackA } from "@radix-ui/colors";
 import { Cross2Icon } from "@radix-ui/react-icons";
 import * as DialogPrimitive from "@radix-ui/react-dialog";
 import { keyframes, styled } from "../stitches.config";
@@ -66,6 +66,7 @@ const StyledDescription = styled(DialogPrimitive.Description, {
     margin: "10px 0 20px",
     color: "$loC",
     fontSize: "$md",
+    whiteSpace: "pre-line",
 });
 
 // Exports

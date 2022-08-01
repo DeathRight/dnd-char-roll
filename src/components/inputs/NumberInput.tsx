@@ -71,6 +71,7 @@ const NumberInput = (props: NumberInputProps) => {
         defaultValue = 0,
         value,
         onChange,
+        onBlur,
         htmlFor,
         text,
         min = 0,
@@ -106,7 +107,11 @@ const NumberInput = (props: NumberInputProps) => {
         <Flex>
             <div>
                 {text && <Label htmlFor={hF}>{text}</Label>}
-                <Popover.Root>
+                <Popover.Root
+                    onOpenChange={(o) => {
+                        if (!o) onBlur?.(num);
+                    }}
+                >
                     <Popover.Trigger asChild>
                         <Input
                             id={hF}

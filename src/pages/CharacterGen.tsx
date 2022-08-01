@@ -74,6 +74,7 @@ const CharacterGenPage = () => {
         minAge,
         maxAge,
         statRoll,
+        advStatSettings,
         statsRange,
         characters,
         setCharacters,
@@ -108,6 +109,7 @@ const CharacterGenPage = () => {
 
             return forms;
         },
+        // eslint-disable-next-line react-hooks/exhaustive-deps
         [
             amount,
             characters,
@@ -116,6 +118,7 @@ const CharacterGenPage = () => {
             setCharacters,
             statRoll,
             statsRange,
+            advStatSettings,
         ]
     );
 
@@ -149,9 +152,7 @@ const CharacterGenPage = () => {
                     padding: "0",
                 }}
             >
-                <Accordion type="single" defaultValue={"char0"}>
-                    {genForms}
-                </Accordion>
+                <Accordion type="multiple">{genForms}</Accordion>
             </Card>
         </>
     );

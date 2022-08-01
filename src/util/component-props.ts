@@ -115,12 +115,13 @@ export interface CopyableTextAreaProps
 }
 
 export interface NumberInputProps
-    extends Omit<React.HTMLProps<HTMLInputElement>, "onChange"> {
+    extends Omit<React.HTMLProps<HTMLInputElement>, "onChange" | "onBlur"> {
     htmlFor?: string;
     text?: string;
     min?: number;
     max?: number;
     onChange?: (value: number) => void;
+    onBlur?: (value: number) => void;
 }
 
 export interface NameInputProps {

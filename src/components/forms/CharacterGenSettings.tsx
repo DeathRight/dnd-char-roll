@@ -1,5 +1,8 @@
+import { DialogClose, DialogTrigger } from "@radix-ui/react-dialog";
+import { CheckCircledIcon, PersonIcon } from "@radix-ui/react-icons";
 import { useState, useEffect } from "react";
 import Roll from "roll";
+import { styled } from "../../stitches.config";
 import { properNoun } from "../../util";
 import { StatNames, DnDListItem } from "../../util/component-props";
 import { Accordion, AccordionListItem } from "../common/Accordion";
@@ -8,18 +11,22 @@ import Card from "../common/Card";
 import Center from "../common/Center";
 import CheckboxInput from "../common/Checkbox";
 import Divider from "../common/Divider";
-import Flex from "../common/Flex";
 import { useGenSettings } from "../contexts/SettingsContextProvider";
+import { useTheme } from "../contexts/ThemeContextProvider";
+import Dialog from "../Dialog";
 import HeaderDnDList from "../HeaderDnDList";
+import IconButton from "../IconButton";
 import NumberInput from "../inputs/NumberInput";
 import SaveCharsToCSV from "../inputs/SaveCharsToCSV";
 import TextInput from "../inputs/TextInput";
+import ParentStatsForm from "./ParentStatsForm";
 
 const roll = new Roll();
 
 const CharacterGenSettings = () => {
     //const { onChange } = props;
     const ctx = useGenSettings();
+    const theme = useTheme();
 
     const [amount, setAmount] = useState(ctx.amount);
     const [minAge, setMinAge] = useState(ctx.minAge);
@@ -59,6 +66,17 @@ const CharacterGenSettings = () => {
         ctx.setParentAStats(parentAStats);
         ctx.setParentBStats(parentBStats);
     };
+
+    const dlgDesc =
+        "Stats inputted here will be used along with the other parents' stats as a range to generate each character's stats from, instead of the normal roll command.\n\nNote: Parents' stats only active if 'Advanced Settings' is checked.";
+    const SaveChangesBtn = styled(IconButton, {
+        backgroundColor: "$success",
+        color: "$successLoC",
+        borderColor: "transparent",
+        "&:hover": { backgroundColor: "$successHover" },
+        "&:active": { backgroundColor: "$successSelect" },
+        "&:focus": { boxShadow: `0 0 0 2px ${theme.colors.successSelect}` },
+    });
 
     return (
         <>
@@ -115,13 +133,61 @@ const CharacterGenSettings = () => {
                             <CheckboxInput
                                 label={"Enable Advanced Settings"}
                                 checked={advStatSettings}
-                                onCheckedChange={(c) =>
-                                    setAdvStatSettings(
-                                        c === true ? true : false
-                                    )
-                                }
+                                onCheckedChange={(c) => {
+                                    const checked = c === true ? true : false;
+                                    if (checked) {
+                                        if (!parentAStats)
+                                            setParentAStats([0, 0, 0, 0, 0, 0]);
+                                        if (!parentBStats)
+                                            setParentBStats([0, 0, 0, 0, 0, 0]);
+                                    }
+                                    setAdvStatSettings(checked);
+                                }}
                             />
-                            {advStatSettings && <>hey ;^)</>}
+                            <Dialog
+                                title="Edit 1st Parent"
+                                description={dlgDesc}
+                            >
+                                <DialogTrigger asChild>
+                                    <IconButton
+                                        disabled={!advStatSettings}
+                                        leftIcon={PersonIcon}
+                                        text={"Edit 1st Parent"}
+                                    />
+                                </DialogTrigger>
+                                <ParentStatsForm
+                                    stats={parentAStats}
+                                    onChange={(v) => setParentAStats(v)}
+                                />
+                                <DialogClose asChild>
+                                    <SaveChangesBtn
+                                        leftIcon={CheckCircledIcon}
+                                        text={"Save Changes"}
+                                    />
+                                </DialogClose>
+                            </Dialog>
+                            <Dialog
+                                title="Edit 2nd Parent"
+                                description={dlgDesc}
+                            >
+                                <DialogTrigger asChild>
+                                    <IconButton
+                                        disabled={!advStatSettings}
+                                        leftIcon={PersonIcon}
+                                        text={"Edit 2nd Parent"}
+                                    />
+                                </DialogTrigger>
+                                <ParentStatsForm
+                                    stats={parentBStats}
+                                    onChange={(v) => setParentBStats(v)}
+                                />
+                                <DialogClose asChild>
+                                    <SaveChangesBtn
+                                        leftIcon={CheckCircledIcon}
+                                        text={"Save Changes"}
+                                    />
+                                </DialogClose>
+                            </Dialog>
                         </Center>
                     </AccordionListItem>
                 </Accordion>

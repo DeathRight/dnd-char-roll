@@ -1,4 +1,5 @@
-import { useId, useMemo, useState } from "react";
+import { useEffect, useId, useMemo, useState } from "react";
+import { parentStatsArray } from "../../contexts/settings-context";
 import useUpdateEffect from "../../hooks/useUpdateEffect";
 import { NumberInputProps, StatNames } from "../../util/component-props";
 import NumberInput from "../inputs/NumberInput";
@@ -14,24 +15,31 @@ const ParentStatInput = (props: NumberInputProps) => {
         <NumberInput
             value={num}
             onChange={(n) => setNum(n)}
-            onBlur={() => onChange?.(num)}
+            onBlur={(n) => {
+                if (n !== num) setNum(n);
+                console.log("onBlur: " + n);
+                onChange?.(num);
+            }}
             {...spread}
         />
     );
 };
 
 const ParentStatsForm = (props: {
-    stats?: number[];
-    onChange?: (stats: number[]) => void;
+    stats?: parentStatsArray;
+    onChange?: (stats: parentStatsArray) => void;
 }) => {
     const { stats, onChange } = props;
 
     const uId = useId();
-    const [values, setValues] = useState(stats ?? []);
+    const [values, setValues] = useState<parentStatsArray>(
+        stats ?? [0, 0, 0, 0, 0, 0]
+    );
 
-    useUpdateEffect(() => {
-        onChange?.(values);
-    }, [values]);
+    useEffect(() => {
+        if (stats !== values) onChange?.(values);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [onChange, values]);
 
     const statInputs = useMemo(
         () =>
@@ -40,11 +48,11 @@ const ParentStatsForm = (props: {
                     <ParentStatInput
                         value={values[i] ?? 0}
                         onChange={(n) => {
-                            let a = Array.from(values);
+                            let a = Array.from(values) as typeof values;
                             a[i] = n;
                             setValues(a);
                         }}
-                        title={v}
+                        text={v}
                         key={`${uId}-${i}`}
                     />
                 </>
