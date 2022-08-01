@@ -1,4 +1,4 @@
-import { styled } from '../../stitches.config';
+import { styled } from "../../stitches.config";
 
 const Button = styled("button", {
     backgroundColor: "$active",
@@ -23,6 +23,10 @@ const Button = styled("button", {
     },
     "&:active": {
         backgroundColor: "$select",
+    },
+    "&:disabled": {
+        backgroundColor: "$inactive",
+        color: "$loC",
     },
 });
 

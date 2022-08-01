@@ -30,6 +30,7 @@ export const CharacterContextProvider = (
         minAge = 1,
         maxAge = 60,
         statRoll = "4d6b3",
+        statRange,
         value,
         children,
     } = props;
@@ -46,21 +47,30 @@ export const CharacterContextProvider = (
     );
 
     /* ---------------------------------- Stats --------------------------------- */
-    const rollStats = (input: string) => {
-        const a = [];
-        for (let i = 0; i < StatNames.length; i++) {
-            a.push(roll.roll(input));
-        }
+    const rollStats = useMemo(
+        () => (input: string) => {
+            const a: (ReturnType<typeof roll.roll> | number)[] = [];
+            StatNames.forEach((_, i) => {
+                // If statRange exists then we are using adv stat settings,
+                // get random int from the range. else, roll.
+                const val = statRange
+                    ? randomInt(statRange.min[i], statRange.max[i])
+                    : roll.roll(input);
+                a.push(val);
+            });
 
-        return a;
-    };
+            return a;
+        },
+        [statRange]
+    );
 
     // ? Passed to state instead of setStats directly for components to reroll stats
     const rerollStats = useMemo(
         () => () => setStats(rollStats(statRoll)),
+        // eslint-disable-next-line react-hooks/exhaustive-deps
         [statRoll]
     );
-    const [stats, setStats] = useState(
+    const [stats, setStats] = useState<ReturnType<typeof rollStats> | number[]>(
         () => value?.stats ?? rollStats(statRoll)
     );
 
@@ -82,9 +92,16 @@ export const CharacterContextProvider = (
                 lastName: name.lastName,
                 background: background,
                 stats: stats,
+                // Create object filled with [(stat name)] = number
+                // then unpack it, so `char["Dexterity"]: number`
                 ...(() => {
                     let o: { [k: string]: number } = {};
-                    stats.forEach((v, i) => (o[StatNames[i]] = v.result));
+                    stats.forEach((v, i) => {
+                        // If is RollOutput (adv settings turned off)
+                        if (typeof v === "object") o[StatNames[i]] = v.result;
+                        // adv settings turned on (rand# from parent stats range)
+                        else o[StatNames[i]] = v;
+                    });
                     return o;
                 })(),
             } as Character),

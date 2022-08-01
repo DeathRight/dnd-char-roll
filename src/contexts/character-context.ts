@@ -1,9 +1,10 @@
-import { createContext, Dispatch, SetStateAction } from "react";
+import { createContext } from "react";
 import Roll from "roll";
 
 import { genName, properNoun, Sex } from "../util";
 import backgrounds from "../util/backgrounds";
 import { Character } from "../util/component-props";
+import { Constize, Stateful } from "../util/typing";
 
 export namespace NameReducer {
     type Actions = "first" | "last" | "full" | "set";
@@ -60,21 +61,6 @@ export namespace NameReducer {
     };
 }
 
-/**
- * Typing equivalent for `const [S, SS] = T` as an object
- *
- * **Example**:
- *
- * `Constize<[0, 1], "first", "second">`
- *
- * results in:
- *
- * `{first: number, second: number}`
- */
-type Constize<T extends [any, any], S extends string, SS extends string> = {
-    [N in S]: NonNullable<T[0]>;
-} & { [M in SS]: NonNullable<T[1]> };
-type Stateful<T> = [T, Dispatch<SetStateAction<T>>];
 /* ------------------------------------ * ----------------------------------- */
 type SexState = Constize<Stateful<Sex>, "sex", "setSex">;
 type AgeState = Constize<Stateful<number>, "age", "setAge">;
@@ -84,7 +70,7 @@ type BgState = Constize<
     "setBackground"
 >;
 type StatsState = {
-    stats: ReturnType<Roll["roll"]>[];
+    stats: (number | ReturnType<Roll["roll"]>)[];
     rerollStats: () => void;
 };
 

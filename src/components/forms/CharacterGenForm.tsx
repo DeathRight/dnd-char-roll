@@ -1,5 +1,5 @@
 import { UpdateIcon } from "@radix-ui/react-icons";
-import { useEffect, useMemo } from "react";
+import { useEffect, useId, useMemo } from "react";
 
 import { styled } from "../../stitches.config";
 import { Sex } from "../../util";
@@ -63,6 +63,8 @@ const CharacterGenForm = (props: CharacterGenFormProps) => {
         char,
     } = useCharacter();
 
+    const uId = useId();
+
     const json = useMemo(() => {
         const { stats: _stats, ...jChar } = char; // We don't need stat calcs in viewable character
         return JSON.stringify(jChar, null, " ");
@@ -80,22 +82,37 @@ const CharacterGenForm = (props: CharacterGenFormProps) => {
             <StyledTable>
                 <StyledTBody>
                     {stats.map((v, i) => {
-                        const rolled = v.calculations[1] as unknown as number[];
-                        // ? Typing is wrong, console.log reveals calculations = [number, number[]]
-                        return (
-                            <tr>
-                                <td>{StatNames[i]}</td>
-                                <td>{`${rolled.join("+")}`}</td>
-                                <td
-                                    style={{ fontWeight: "bold" }}
-                                >{`${v.result}`}</td>
-                            </tr>
-                        );
+                        if (typeof v === "object") {
+                            // Stats were rolled instead of chosen from a range
+                            // so we have to display calcs
+                            const rolled = v
+                                .calculations[1] as unknown as number[];
+                            // ? Typing is wrong, console.log reveals calculations = [number, number[]]
+                            return (
+                                <tr key={`${uId}${i}-tr`}>
+                                    <td>{StatNames[i]}</td>
+                                    <td>{`${rolled.join("+")}`}</td>
+                                    <td
+                                        style={{ fontWeight: "bold" }}
+                                    >{`${v.result}`}</td>
+                                </tr>
+                            );
+                        } else {
+                            // Stats were chosen from a range, no calcs to display
+                            return (
+                                <tr key={`${uId}${i}-tr`}>
+                                    <td>{StatNames[i]}</td>
+                                    <td
+                                        style={{ fontWeight: "bold" }}
+                                    >{`${v}`}</td>
+                                </tr>
+                            );
+                        }
                     })}
                 </StyledTBody>
             </StyledTable>
         ),
-        [stats]
+        [stats, uId]
     );
 
     /* --------------------------------- Render --------------------------------- */
@@ -136,6 +153,7 @@ const CharacterGenForm = (props: CharacterGenFormProps) => {
             <Divider label="Background" />
             <Flex>
                 <SelectList
+                    key={`${uId}-bgL`}
                     aria-label="Background"
                     list={backgrounds as unknown as string[]}
                     value={background.toLowerCase()}

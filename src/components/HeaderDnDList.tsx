@@ -1,9 +1,8 @@
-import React, { useState } from "react";
+import React, { useId, useState } from "react";
 import { DragDropContext, Draggable, DropResult } from "react-beautiful-dnd";
 import useUpdateEffect from "../hooks/useUpdateEffect";
 import { styled } from "../stitches.config";
 import { DnDListItem, HeaderDnDListProps } from "../util/component-props";
-import Flex from "./common/Flex";
 import { StrictModeDroppable } from "./common/StrictModeDroppable";
 
 const HeaderDiv = styled("div", {
@@ -54,10 +53,11 @@ const HeaderItem = (props: { value: DnDListItem; index: number }) => {
 };
 
 const HeaderList = React.memo((props: { list: DnDListItem[] }) => {
+    const uId = useId();
     return (
         <>
             {props.list.map((v, i) => (
-                <HeaderItem value={v} index={i} />
+                <HeaderItem key={`${uId}-${i}`} value={v} index={i} />
             ))}
         </>
     );

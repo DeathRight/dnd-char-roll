@@ -6,7 +6,6 @@ import { useEffect, useState } from "react";
 import useCopyToClipboard from "../../hooks/useCopyToClipboard";
 import { styled } from "../../stitches.config";
 import { CopyableInputProps } from "../../util/component-props";
-import Button from "../common/Button";
 import Center from "../common/Center";
 import { useTheme } from "../contexts/ThemeContextProvider";
 import IconMorph from "../IconMorph";
