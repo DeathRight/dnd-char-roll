@@ -1,6 +1,10 @@
 import { DialogClose, DialogTrigger } from "@radix-ui/react-dialog";
-import { CheckCircledIcon, PersonIcon } from "@radix-ui/react-icons";
-import { useState, useEffect } from "react";
+import {
+    CheckCircledIcon,
+    PersonIcon,
+    UpdateIcon,
+} from "@radix-ui/react-icons";
+import { useState, useEffect, useMemo } from "react";
 import Roll from "roll";
 import { styled } from "../../stitches.config";
 import { properNoun } from "../../util";
@@ -78,6 +82,67 @@ const CharacterGenSettings = () => {
         "&:focus": { boxShadow: `0 0 0 2px ${theme.colors.successSelect}` },
     });
 
+    const Dialogs = useMemo(
+        () => (
+            <>
+                <Dialog
+                    title="Edit 1st Parent"
+                    description={dlgDesc}
+                    key={"pEdA"}
+                >
+                    <DialogTrigger asChild>
+                        <IconButton
+                            disabled={!advStatSettings}
+                            leftIcon={PersonIcon}
+                            text={"Edit 1st Parent"}
+                            key={"pEdA-btn"}
+                        />
+                    </DialogTrigger>
+                    <ParentStatsForm
+                        stats={parentAStats}
+                        onChange={(v) => setParentAStats(v)}
+                        key={"pSFA"}
+                    />
+                    <DialogClose asChild>
+                        <SaveChangesBtn
+                            leftIcon={CheckCircledIcon}
+                            text={"Save Changes"}
+                            key={"pEdA-save"}
+                        />
+                    </DialogClose>
+                </Dialog>
+                <Dialog
+                    title="Edit 2nd Parent"
+                    description={dlgDesc}
+                    key={"pEdB"}
+                >
+                    <DialogTrigger asChild>
+                        <IconButton
+                            disabled={!advStatSettings}
+                            leftIcon={PersonIcon}
+                            text={"Edit 2nd Parent"}
+                            key={"pEdB-btn"}
+                        />
+                    </DialogTrigger>
+                    <ParentStatsForm
+                        stats={parentBStats}
+                        onChange={(v) => setParentBStats(v)}
+                        key={"pSFB"}
+                    />
+                    <DialogClose asChild>
+                        <SaveChangesBtn
+                            leftIcon={CheckCircledIcon}
+                            text={"Save Changes"}
+                            key={"pEdB-save"}
+                        />
+                    </DialogClose>
+                </Dialog>
+            </>
+        ),
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+        [advStatSettings, parentAStats, parentBStats]
+    );
+
     return (
         <>
             <Card>
@@ -90,8 +155,12 @@ const CharacterGenSettings = () => {
                     text={"Amount"}
                     onChange={(v) => setAmount(v)}
                 />
-                <Accordion style={{ width: "100%" }} type="multiple">
-                    <AccordionListItem title="Biology">
+                <Accordion
+                    style={{ width: "100%" }}
+                    type="multiple"
+                    key={"accStngs"}
+                >
+                    <AccordionListItem title="Biology" key={"accBio"}>
                         <Center>
                             <NumberInput
                                 defaultValue={1}
@@ -109,7 +178,7 @@ const CharacterGenSettings = () => {
                             />
                         </Center>
                     </AccordionListItem>
-                    <AccordionListItem title="Stats">
+                    <AccordionListItem title="Stats" key={"accStats"}>
                         <Center>
                             <TextInput
                                 label={"Roll Command"}
@@ -144,54 +213,20 @@ const CharacterGenSettings = () => {
                                     setAdvStatSettings(checked);
                                 }}
                             />
-                            <Dialog
-                                title="Edit 1st Parent"
-                                description={dlgDesc}
-                            >
-                                <DialogTrigger asChild>
-                                    <IconButton
-                                        disabled={!advStatSettings}
-                                        leftIcon={PersonIcon}
-                                        text={"Edit 1st Parent"}
-                                    />
-                                </DialogTrigger>
-                                <ParentStatsForm
-                                    stats={parentAStats}
-                                    onChange={(v) => setParentAStats(v)}
-                                />
-                                <DialogClose asChild>
-                                    <SaveChangesBtn
-                                        leftIcon={CheckCircledIcon}
-                                        text={"Save Changes"}
-                                    />
-                                </DialogClose>
-                            </Dialog>
-                            <Dialog
-                                title="Edit 2nd Parent"
-                                description={dlgDesc}
-                            >
-                                <DialogTrigger asChild>
-                                    <IconButton
-                                        disabled={!advStatSettings}
-                                        leftIcon={PersonIcon}
-                                        text={"Edit 2nd Parent"}
-                                    />
-                                </DialogTrigger>
-                                <ParentStatsForm
-                                    stats={parentBStats}
-                                    onChange={(v) => setParentBStats(v)}
-                                />
-                                <DialogClose asChild>
-                                    <SaveChangesBtn
-                                        leftIcon={CheckCircledIcon}
-                                        text={"Save Changes"}
-                                    />
-                                </DialogClose>
-                            </Dialog>
+                            {Dialogs}
                         </Center>
                     </AccordionListItem>
                 </Accordion>
                 <Button onClick={() => onSubmit()}>Submit</Button>
+                <IconButton
+                    icon={UpdateIcon}
+                    aria-label={"Regenerate All Characters"}
+                    tooltip={"Regenerate All Characters"}
+                    onClick={(e) => {
+                        ctx.setCharacters([]);
+                        ctx.setId(Math.floor(Math.random() * 100).toString());
+                    }}
+                />
             </Card>
             <Card style={{ maxWidth: "90%" }}>
                 <h2>CSV</h2>

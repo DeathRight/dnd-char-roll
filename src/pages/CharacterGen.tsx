@@ -78,6 +78,7 @@ const CharacterGenPage = () => {
         statsRange,
         characters,
         setCharacters,
+        id,
     } = useGenSettings();
 
     const createGenForms = useCallback(
@@ -91,7 +92,7 @@ const CharacterGenPage = () => {
                         statRoll={statRoll}
                         statRange={statsRange}
                         id={`char${ind}`}
-                        key={`charAccord${ind}`}
+                        key={`-${id}-charAccord${ind}`}
                         index={ind}
                         value={charList[ind]}
                         onChange={(i, char) => {
@@ -119,6 +120,7 @@ const CharacterGenPage = () => {
             statRoll,
             statsRange,
             advStatSettings,
+            id,
         ]
     );
 
@@ -141,6 +143,7 @@ const CharacterGenPage = () => {
         setCharacters,
         statRoll,
         statsRange,
+        id,
     ]);
 
     return (

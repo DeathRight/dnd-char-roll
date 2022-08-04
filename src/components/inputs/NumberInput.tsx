@@ -1,6 +1,7 @@
 import { blackA } from "@radix-ui/colors";
 import * as LabelPrim from "@radix-ui/react-label";
 import React, { useEffect, useId, useState } from "react";
+import { Key } from "ts-key-enum";
 
 import { styled } from "../../stitches.config";
 import { NumberInputProps } from "../../util/component-props";
@@ -75,12 +76,18 @@ const NumberInput = (props: NumberInputProps) => {
         htmlFor,
         text,
         min = 0,
-        max,
+        max = 100,
         children,
         ref,
         ...spread
     } = props;
+    // Local state
     const [num, setNum] = useState(toNum(defaultValue));
+    // Global state
+    const [gNum, setGNum] = useState(toNum(defaultValue));
+    // Whether focused or not
+    const [isFocused, setIsFocused] = useState(false);
+
     const uid = useId();
     const hF = htmlFor ?? uid;
 
@@ -91,34 +98,64 @@ const NumberInput = (props: NumberInputProps) => {
         if (v !== num) {
             setNum(v);
         }
-
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [defaultValue, value, num, min, max]);
 
-    const onInputChange = (v: ValueType) => {
+    const onInputChange = (v: ValueType, global?: boolean) => {
         const newV = compute(v, num, min, max);
         if (newV !== num) {
             setNum(newV);
             onChange?.(newV);
+            if (global) setGNum(newV);
+        }
+    };
+
+    const onFocusChanged = (f: boolean) => {
+        setGNum(num);
+        setIsFocused(f);
+        if (!f) onBlur?.(num);
+    };
+
+    const onKeyDown = (e: React.KeyboardEvent) => {
+        const key = e.key;
+        const numKey = toNum(key);
+
+        if (!isNaN(numKey)) {
+            if (isFocused) {
+                onInputChange(`${num}${numKey}`);
+            } else {
+                onInputChange(numKey);
+            }
+        } else if (key === Key.Backspace) {
+            const numStr = num.toString();
+            // Remove last character
+            const slice = numStr.slice(0, numStr.length - 1);
+            onInputChange(slice);
+        }
+
+        if (!isFocused) {
+            onFocusChanged(true);
         }
     };
 
     return (
         <Flex>
-            <div>
+            <div onBlur={() => onFocusChanged(false)}>
                 {text && <Label htmlFor={hF}>{text}</Label>}
                 <Popover.Root
                     onOpenChange={(o) => {
-                        if (!o) onBlur?.(num);
+                        if (!o) {
+                            onFocusChanged(false);
+                            onBlur?.(num);
+                        }
                     }}
                 >
                     <Popover.Trigger asChild>
                         <Input
                             id={hF}
                             value={num}
-                            onChange={(e) =>
-                                onInputChange(e.currentTarget.value)
-                            }
+                            min={min}
+                            max={max}
+                            onKeyDown={(e) => onKeyDown(e)}
                             {...spread}
                         />
                     </Popover.Trigger>
@@ -128,6 +165,7 @@ const NumberInput = (props: NumberInputProps) => {
                             min={min}
                             value={[num]}
                             onValueChange={(v) => onInputChange(v[0])}
+                            onKeyDown={(e) => onKeyDown(e)}
                         />
                     </Popover.Content>
                 </Popover.Root>

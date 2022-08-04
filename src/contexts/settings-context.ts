@@ -31,6 +31,8 @@ type CharactersState = Constize<
     "characters",
     "setCharacters"
 >;
+//--
+type IdState = Constize<Stateful<string>, "id", "setId">;
 
 /* --------------------------------- Exports -------------------------------- */
 export type State = CharactersState &
@@ -43,7 +45,7 @@ export type State = CharactersState &
     ParentAStatsState &
     ParentBStatsState & {
         statsRange: statsRangeObj | undefined;
-    };
+    } & IdState;
 
 export const SettingsContext = createContext<State | undefined>(undefined);
 export const SettingsProvider = SettingsContext.Provider;
