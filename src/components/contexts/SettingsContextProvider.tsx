@@ -59,6 +59,7 @@ export const GenSettingsContextProvider = (
     }, [advStatSettings, parentAStats, parentBStats]);
 
     /* --------------------------------- Render --------------------------------- */
+    const [id, setId] = useState(Math.floor(Math.random() * 100).toString());
     const state: State = useMemo(
         () => ({
             amount,
@@ -78,11 +79,14 @@ export const GenSettingsContextProvider = (
             parentBStats,
             setParentBStats,
             statsRange,
+            id,
+            setId,
         }),
         [
             advStatSettings,
             amount,
             characters,
+            id,
             maxAge,
             minAge,
             parentAStats,

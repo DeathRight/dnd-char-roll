@@ -13,11 +13,11 @@ const ParentStatInput = (props: NumberInputProps) => {
     }, [value]);
     return (
         <NumberInput
+            max={30}
             value={num}
             onChange={(n) => setNum(n)}
             onBlur={(n) => {
                 if (n !== num) setNum(n);
-                console.log("onBlur: " + n);
                 onChange?.(num);
             }}
             {...spread}
