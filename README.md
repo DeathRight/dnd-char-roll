@@ -2,7 +2,7 @@
 
 ## Description
 A highly customizable DnD character generator, with support for generating up to 100 characters at once.
-Built using React18+Stiches+Radix-UI primitives.
+Built using React18+Stitches+Radix-UI primitives.
 
 ## Features
 - Name generation, with support to randomize the seed used for name generation (will alter the style of names)
